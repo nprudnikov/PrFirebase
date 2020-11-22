@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+	<init>
+		<log text="Firebase Initialization"/>
+		<setBoolFromProperty result="bEnabled" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseEnable" default="false"/>
+		<setStringFromProperty result="ConfigFile" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="FirebaseAndroidConfig" default="Config/Firebase/google-services.json"/>
+	</init>
+
+	<gradleProperties>
+		<if condition="bEnabled">
+			<true>
+				<insert> --debug </insert>
+			</true>
+		</if>
+	</gradleProperties>
+
+	<proguardAdditions>
+		<if condition="bEnabled">
+			<true>
+				<insert>
+					-keepattributes *Annotation*
+					-keepattributes SourceFile,LineNumberTable
+					-keep public class * extends java.lang.Exception
+					-keep class com.crashlytics.** { *; }
+					-dontwarn com.crashlytics.**
+				</insert>
+			</true>
+		</if>
+	</proguardAdditions>
+
+	<buildscriptGradleAdditions>
+		<if condition="bEnabled">
+			<true>
+				<insert>
+					repositories {
+						maven {
+							url 'https://maven.fabric.io/public'
+						}
+					}
+
+					dependencies {
+						classpath 'com.google.gms:google-services:4.2.0'
+						classpath 'io.fabric.tools:gradle:1.31.2'
+					}
+				</insert>
+			</true>
+		</if>
+	</buildscriptGradleAdditions>
+
+	<buildGradleAdditions>
+		<if condition="bEnabled">
+			<true>
+				<insert>
+					dependencies {
+						implementation 'com.google.firebase:firebase-core:16.0.6'
+						implementation 'com.google.firebase:firebase-analytics:16.0.6'
+						implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+						implementation 'com.crashlytics.sdk.android:crashlytics-ndk:2.1.1'
+					}
+
+					apply plugin: 'com.android.application'
+					apply plugin: 'com.google.gms.google-services'
+					apply plugin: 'io.fabric'
+
+					crashlytics {
+						enableNdk true
+						androidNdkOut 'src/main/jniLibs'
+						androidNdkLibsOut 'src/main/jniLibs'
+					}
+				</insert>
+			</true>
+		</if>
+	</buildGradleAdditions>
+
+	<prebuildCopies>
+		<if condition="bEnabled">
+			<true>
+				<copyDir src="$S(PluginDir)/External/Android" dst="$S(BuildDir)/src"/>
+				<copyFile src="$S(PluginDir)/../../../../$S(ConfigFile)" dst="$S(BuildDir)/gradle/app/google-services.json" force="false"/>
+				<copyFile src="$S(PluginDir)/../../../../$S(ConfigFile)" dst="$S(BuildDir)/gradle/app/src/debug/google-services.json" force="false"/>
+				<copyFile src="$S(PluginDir)/../../../../$S(ConfigFile)" dst="$S(BuildDir)/gradle/app/src/release/google-services.json" force="false"/>
+			</true>
+		</if>
+	</prebuildCopies>
+	
+	<gameActivityImportAdditions>
+		<if condition="bEnabled">
+			<true>
+				<insert>
+					<![CDATA[
+						import com.pr.firebase.*;
+					]]>
+				</insert>
+			</true>
+		</if>
+	</gameActivityImportAdditions>
+
+	<gameActivityClassAdditions>
+		<if condition="bEnabled">
+			<true>
+				<insert>
+					<![CDATA[
+						public void AndroidThunkJava_Firebase_Initialize()
+						{
+							
+						}
+
+						public void AndroidThunkJava_FirebaseCrashlytics_SetUserIdentifier(String UserIdentifier)
+						{
+							PrFirebase.crashlyticsProxy().setUserIdentifier(UserIdentifier);
+						}
+
+						public void AndroidThunkJava_FirebaseCrashlytics_WriteLog(String Log)
+						{
+							PrFirebase.crashlyticsProxy().writeLog(Log);
+						}
+
+						public void AndroidThunkJava_FirebaseCrashlytics_WriteError(String Log)
+						{
+							PrFirebase.crashlyticsProxy().writeException(new RuntimeException(String.format("%s", Log)));
+						}
+
+						public void AndroidThunkJava_FirebaseCrashlytics_AddAttribute(String Key, String Value)
+						{
+							PrFirebase.crashlyticsProxy().addAttribute(Key, Value);
+						}
+					]]>
+				</insert>
+			</true>
+		</if>
+	</gameActivityClassAdditions>
+
+	<gameActivityOnCreateAdditions>
+		<if condition="bEnabled">
+			<true>
+				<insert>
+					<![CDATA[
+						PrFirebase.initialize(this);
+					]]>
+				</insert>
+			</true>
+		</if>
+	</gameActivityOnCreateAdditions>
+
+</root>

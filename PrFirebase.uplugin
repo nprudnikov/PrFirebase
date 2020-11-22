@@ -1,0 +1,22 @@
+{
+	"FileVersion" : 3,
+
+	"FriendlyName" : "PrFirebase",
+	"Version" : 1,
+	"VersionName" : "0.1",
+	"CreatedBy" : "Prudnikov Nikolay",
+	"CreatedByURL" : "https://github.com/nprudnikov",
+	"EngineVersion" : "4.26.0",
+	"Description" : "",
+	"Category" : "Analytics",
+	"MarketplaceURL" : "",
+
+	"Modules" :
+	[
+		{
+			"Name" : "PrFirebase",
+			"Type" : "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		}
+	]
+}
