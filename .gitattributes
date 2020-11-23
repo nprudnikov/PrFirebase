@@ -1,3 +1,2 @@
 *.zip filter=lfs diff=lfs merge=lfs -text
-ThirdParty/iOS/run filter=lfs diff=lfs merge=lfs -text
 ThirdParty/iOS/upload-symbols filter=lfs diff=lfs merge=lfs -text
