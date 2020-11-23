@@ -9,7 +9,10 @@
 	<gradleProperties>
 		<if condition="bEnabled">
 			<true>
-				<insert> --debug </insert>
+				<insert>
+					android.useAndroidX=true
+					android.enableJetifier=true
+				</insert>
 			</true>
 		</if>
 	</gradleProperties>
@@ -33,14 +36,12 @@
 			<true>
 				<insert>
 					repositories {
-						maven {
-							url 'https://maven.fabric.io/public'
-						}
+						google()
 					}
 
 					dependencies {
-						classpath 'com.google.gms:google-services:4.2.0'
-						classpath 'io.fabric.tools:gradle:1.31.2'
+						classpath 'com.google.gms:google-services:4.3.4'
+						classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
 					}
 				</insert>
 			</true>
@@ -52,20 +53,60 @@
 			<true>
 				<insert>
 					dependencies {
-						implementation 'com.google.firebase:firebase-core:16.0.6'
-						implementation 'com.google.firebase:firebase-analytics:16.0.6'
-						implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-						implementation 'com.crashlytics.sdk.android:crashlytics-ndk:2.1.1'
+						implementation 'com.google.firebase:firebase-analytics:18.0.0'
+						implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
+						implementation 'com.google.firebase:firebase-crashlytics-ndk:17.3.0'
 					}
 
 					apply plugin: 'com.android.application'
 					apply plugin: 'com.google.gms.google-services'
-					apply plugin: 'io.fabric'
+					apply plugin: 'com.google.firebase.crashlytics'
 
-					crashlytics {
-						enableNdk true
-						androidNdkOut 'src/main/jniLibs'
-						androidNdkLibsOut 'src/main/jniLibs'
+					android {
+						buildTypes {
+							release {
+								firebaseCrashlytics {
+									nativeSymbolUploadEnabled true
+									strippedNativeLibsDir 'build/intermediates/stripped_native_libs/release/out/lib'
+									unstrippedNativeLibsDir 'src/main/jniLibs'
+								}
+							}
+							debug {
+								firebaseCrashlytics {
+									nativeSymbolUploadEnabled true
+									strippedNativeLibsDir 'build/intermediates/stripped_native_libs/debug/out/lib'
+									unstrippedNativeLibsDir 'src/main/jniLibs'
+								}
+							}
+						}
+					}
+
+					allprojects {
+						def mappings = [
+							'android.support.annotation': 'androidx.annotation',
+							'android.arch.lifecycle': 'androidx.lifecycle',
+							'android.support.v4.app.NotificationCompat': 'androidx.core.app.NotificationCompat',
+							'android.support.v4.app.NotificationManagerCompat': 'androidx.core.app.NotificationManagerCompat',
+							'android.support.v4.app.ActivityCompat': 'androidx.core.app.ActivityCompat',
+							'android.support.v4.content.ContextCompat': 'androidx.core.content.ContextCompat',
+							'android.support.v4.content.FileProvider': 'androidx.core.content.FileProvider',
+							'android.support.v13.app.FragmentCompat': 'androidx.legacy.app.FragmentCompat',
+							'android.arch.lifecycle.Lifecycle': 'androidx.lifecycle.Lifecycle',
+							'android.arch.lifecycle.LifecycleObserver': 'androidx.lifecycle.LifecycleObserver',
+							'android.arch.lifecycle.OnLifecycleEvent': 'androidx.lifecycle.OnLifecycleEvent',
+							'android.arch.lifecycle.ProcessLifecycleOwner': 'androidx.lifecycle.ProcessLifecycleOwner',
+						]
+
+						afterEvaluate { project ->
+							project.rootProject.projectDir.traverse(type: groovy.io.FileType.FILES, nameFilter: ~/.*\.java$/) { f ->
+								mappings.each { entry ->
+									if (f.getText('UTF-8').contains(entry.key)) {
+										println "Updating ${entry.key} to ${entry.value} in file ${f}"
+										ant.replace(file: f, token: entry.key, value: entry.value)
+									}
+								}
+							}
+						}
 					}
 				</insert>
 			</true>
