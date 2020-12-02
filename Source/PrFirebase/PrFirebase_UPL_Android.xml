@@ -2,82 +2,165 @@
 <root xmlns:android="http://schemas.android.com/apk/res/android">
 	<init>
 		<log text="Firebase Initialization"/>
-		<setBoolFromProperty result="bEnabled" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseEnable" default="false"/>
 		<setStringFromProperty result="ConfigFile" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="FirebaseAndroidConfig" default="Config/Firebase/google-services.json"/>
+
+		<setBoolFromProperty result="bFirebaseEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseEnable" default="false"/>
+		<setBoolFromProperty result="bFirebaseCrashlyticsEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseCrashlyticsEnable" default="false"/>
+		<setBoolFromProperty result="bFirebaseRemoteConfigEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseRemoteConfigEnable" default="false"/>
+		<setBoolFromProperty result="bFirebasePerformanceEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebasePerformanceEnable" default="false"/>
 	</init>
 
-	<proguardAdditions>
-		<if condition="bEnabled">
+	<androidManifestUpdates>
+		<if condition="bFirebaseEnable">
 			<true>
-				<insert>
-					-keepattributes *Annotation*
-					-keepattributes SourceFile,LineNumberTable
-					-keep public class * extends java.lang.Exception
-					-keep class com.crashlytics.** { *; }
-					-dontwarn com.crashlytics.**
-				</insert>
+				<if condition="bFirebasePerformanceEnable">
+					<true>
+						<addElements tag="application">
+							<meta-data android:name="firebase_performance_logcat_enabled" android:value="false"/>
+						</addElements>
+					</true>
+				</if>
+			</true>
+		</if>
+	</androidManifestUpdates>
+
+	<proguardAdditions>
+		<if condition="bFirebaseEnable">
+			<true> 
+				<if condition="bFirebaseCrashlyticsEnable">
+					<true>
+						<insert>
+							-keepattributes *Annotation*
+							-keepattributes SourceFile,LineNumberTable
+							-keep public class * extends java.lang.Exception
+							-keep class com.crashlytics.** { *; }
+							-dontwarn com.crashlytics.**
+						</insert>
+					</true>
+				</if>
 			</true>
 		</if>
 	</proguardAdditions>
 
 	<buildscriptGradleAdditions>
-		<if condition="bEnabled">
+		<if condition="bFirebaseEnable">
 			<true>
 				<insert>
 					repositories {
 						google()
+
+						jcenter()
 					}
 
 					dependencies {
 						classpath 'com.google.gms:google-services:4.3.4'
-						classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
-					}
+				</insert>
+
+				<if condition="bFirebaseCrashlyticsEnable">
+					<true>
+						<insert>
+							classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
+						</insert>
+					</true>
+				</if>
+
+				<if condition="bFirebasePerformanceEnable">
+					<true>
+						<insert>
+							classpath 'com.google.firebase:perf-plugin:1.3.4'
+						</insert>
+					</true>
+				</if>
+
+				<insert>
+					}	// dependencies
 				</insert>
 			</true>
 		</if>
 	</buildscriptGradleAdditions>
 
 	<buildGradleAdditions>
-		<if condition="bEnabled">
+		<if condition="bFirebaseEnable">
 			<true>
 				<insert>
 					dependencies {
-						implementation 'com.google.firebase:firebase-analytics:18.0.0'
-						implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
-						implementation 'com.google.firebase:firebase-crashlytics-ndk:17.3.0'
+						implementation platform('com.google.firebase:firebase-bom:26.1.0')
+						implementation 'com.google.firebase:firebase-analytics'
+				</insert>
 
-						implementation 'com.google.android.gms:play-services-base:17.5.0'
-					}
+				<if condition="bFirebaseCrashlyticsEnable">
+					<true>
+						<insert>
+							implementation 'com.google.firebase:firebase-crashlytics'
+							implementation 'com.google.firebase:firebase-crashlytics-ndk'
+						</insert>
+					</true>
+				</if>
+
+				<if condition="bFirebaseRemoteConfigEnable">
+					<true>
+						<insert>
+							implementation 'com.google.firebase:firebase-config'
+						</insert>
+					</true>
+				</if>
+
+				<if condition="bFirebasePerformanceEnable">
+					<true>
+						<insert>
+							implementation 'com.google.firebase:firebase-perf'
+						</insert>
+					</true>
+				</if>
+
+				<insert>
+					}	// dependencies
 
 					apply plugin: 'com.android.application'
 					apply plugin: 'com.google.gms.google-services'
-					apply plugin: 'com.google.firebase.crashlytics'
-
-					android {
-						buildTypes {
-							release {
-								firebaseCrashlytics {
-									nativeSymbolUploadEnabled true
-									strippedNativeLibsDir 'build/intermediates/stripped_native_libs/release/out/lib'
-									unstrippedNativeLibsDir 'src/main/jniLibs'
-								}
-							}
-							debug {
-								firebaseCrashlytics {
-									nativeSymbolUploadEnabled true
-									strippedNativeLibsDir 'build/intermediates/stripped_native_libs/debug/out/lib'
-									unstrippedNativeLibsDir 'src/main/jniLibs'
-								}
-							}
-						}
-					}
 				</insert>
+
+				<if condition="bFirebasePerformanceEnable">
+					<true>
+						<insert>
+							apply plugin: 'com.google.firebase.firebase-perf'
+						</insert>
+					</true>
+				</if>
+
+				<if condition="bFirebaseCrashlyticsEnable">
+					<true>
+						<insert>
+							apply plugin: 'com.google.firebase.crashlytics'
+
+							android {
+								buildTypes {
+									release {
+										firebaseCrashlytics {
+											nativeSymbolUploadEnabled true
+											strippedNativeLibsDir 'build/intermediates/stripped_native_libs/release/out/lib'
+											unstrippedNativeLibsDir 'src/main/jniLibs'
+										}
+									}
+									debug {
+										firebaseCrashlytics {
+											nativeSymbolUploadEnabled true
+											strippedNativeLibsDir 'build/intermediates/stripped_native_libs/debug/out/lib'
+											unstrippedNativeLibsDir 'src/main/jniLibs'
+										}
+									}
+								}
+							}
+						</insert>
+					</true>
+				</if>
+
 			</true>
 		</if>
 	</buildGradleAdditions>
 
 	<prebuildCopies>
-		<if condition="bEnabled">
+		<if condition="bFirebaseEnable">
 			<true>
 				<copyDir src="$S(PluginDir)/External/Android" dst="$S(BuildDir)/src"/>
 				<copyFile src="$S(PluginDir)/../../../../$S(ConfigFile)" dst="$S(BuildDir)/gradle/app/google-services.json" force="false"/>
@@ -88,7 +171,7 @@
 	</prebuildCopies>
 	
 	<gameActivityImportAdditions>
-		<if condition="bEnabled">
+		<if condition="bFirebaseEnable">
 			<true>
 				<insert>
 					<![CDATA[
@@ -100,7 +183,7 @@
 	</gameActivityImportAdditions>
 
 	<gameActivityClassAdditions>
-		<if condition="bEnabled">
+		<if condition="bFirebaseEnable">
 			<true>
 				<insert>
 					<![CDATA[
@@ -135,7 +218,7 @@
 	</gameActivityClassAdditions>
 
 	<gameActivityOnCreateAdditions>
-		<if condition="bEnabled">
+		<if condition="bFirebaseEnable">
 			<true>
 				<insert>
 					<![CDATA[
