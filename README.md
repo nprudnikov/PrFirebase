@@ -24,4 +24,4 @@ Current version: **1.0 R 1** (UE 4.26)
 
 ## Installation notes
 
-AndroidX support is required to run Firebase on Android platform. If your project is not configured yet, you can use [ufna/AndroidX-UE4](https://github.com/ufna/AndroidX-UE4) plugin to add it.
+AndroidX support is required to run Firebase on Android platform. If your project is not configured yet, take a look at [ufna/AndroidX-UE4](https://github.com/ufna/AndroidX-UE4) plugin - just add it and job is done.
