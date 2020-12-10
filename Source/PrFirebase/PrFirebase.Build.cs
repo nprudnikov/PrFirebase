@@ -231,7 +231,7 @@ namespace UnrealBuildTool.Rules
 						);
                     }
                     
-                    PublicAdditionalLibraries.Add("sqlite3");
+                    PublicSystemLibraries.Add("sqlite3");
                     
                     PrivateIncludePaths.Add("PrFirebase/External/iOS");
 
