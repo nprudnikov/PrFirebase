@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// clang-format off
+
 #import <FirebaseCore/FirebaseCore.h>
 
 #if !defined(__has_include)
@@ -170,3 +172,5 @@ FirebaseAnalytics dependency to your project to ensure Firebase Remote Config wo
   #endif
 
 #endif  // defined(__has_include)
+
+// clang-format on
