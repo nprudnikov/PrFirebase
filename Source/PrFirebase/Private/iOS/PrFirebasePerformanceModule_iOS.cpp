@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 #include "iOS/PrFirebasePerformanceModule_iOS.h"
 
 #if WITH_FIREBASE_PERFORMANCE && PLATFORM_IOS

@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 package com.pr.firebase;
 
 import com.pr.firebase.*;

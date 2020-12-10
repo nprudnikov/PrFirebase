@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 #include "iOS/PrFirebaseRemoteConfigModule_iOS.h"
 
 #if WITH_FIREBASE_REMOTECONFIG && PLATFORM_IOS

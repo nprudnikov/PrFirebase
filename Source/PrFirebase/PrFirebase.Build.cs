@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 using System.IO;
 using Tools.DotNETCommon;
 

@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 #include "Android/PrFirebaseCrashlyticsModule_Android.h"
 
 #include "PrFirebaseDefines.h"

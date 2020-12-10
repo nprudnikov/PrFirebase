@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 #include "Android/PrFirebase_Android.h"
 
 #include "PrFirebaseDefines.h"

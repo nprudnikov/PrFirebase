@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 #include "iOS/PrFirebase_iOS.h"
 
 #include "PrFirebaseDefines.h"

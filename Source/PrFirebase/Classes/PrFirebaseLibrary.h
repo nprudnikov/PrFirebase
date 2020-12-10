@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"

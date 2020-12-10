@@ -1,3 +1,5 @@
+// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+
 #include "PrFirebaseSettings.h"
 
 UPrFirebaseSettings::UPrFirebaseSettings(const FObjectInitializer& ObjectInitializer)
