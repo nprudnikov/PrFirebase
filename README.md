@@ -1,6 +1,5 @@
 [![statusIcon](https://teamcity.ufna.dev/app/rest/builds/buildType:(id:UfnaDev_PrFirebase_ClangFormatCheck)/statusIcon.svg)](https://teamcity.ufna.dev/viewType.html?buildTypeId=UfnaDev_PrFirebase_ClangFormatCheck&guest=1)
 ![GitHub](https://img.shields.io/github/license/nprudnikov/PrFirebase)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nprudnikov/PrFirebase?include_prereleases)
 
 # PrFirebase
 
