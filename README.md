@@ -1,14 +1,19 @@
 # PrFirebase
 
-Firebase SDK integration for Unreal Engine 4.
+[Firebase](https://firebase.google.com/) SDK integration for [Unreal Engine 4](https://www.unrealengine.com/). Kindly supported by [ufna](https://github.com/ufna) and [Pushkin Studio](https://github.com/PushkinStudio).
 
-Features:
+Primary supported modules:
 * Analytics
-* Auth
 * Crashlytics
 * Performance
 * Remote Config
 
-TBD:
-* Distribution
+Additional features:
+* Auth 
+
+Planned:
 * Functions
+
+Current version: **1.0 R 1** (UE 4.26)
+
+![SCREENSHOT](SCREENSHOT.jpg)
