@@ -2,9 +2,7 @@
 
 #include "PrFirebasePerformanceModule.h"
 
-#include "PrFirebaseCrashlyticsModule.h"
 #include "PrFirebaseDefines.h"
-#include "PrFirebaseLibrary.h"
 #include "PrFirebaseSettings.h"
 
 #include "Async/Async.h"

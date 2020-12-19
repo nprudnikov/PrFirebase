@@ -2,17 +2,21 @@
 
 #include "PrFirebaseCrashlyticsModule.h"
 
-#include "PrFirebaseDefines.h"
-#include "PrFirebaseLibrary.h"
-#include "PrFirebaseRemoteConfigModule.h"
 #include "PrFirebaseSettings.h"
 
-#include "Async/Async.h"
 #include "HAL/PlatformOutputDevices.h"
 #include "Misc/CoreMisc.h"
 #include "Misc/OutputDevice.h"
 #include "Misc/OutputDeviceError.h"
 #include "Misc/OutputDeviceHelper.h"
+
+#if WITH_FIREBASE_REMOTECONFIG
+#include "PrFirebaseDefines.h"
+#include "PrFirebaseLibrary.h"
+#include "PrFirebaseRemoteConfigModule.h"
+
+#include "Async/Async.h"
+#endif
 
 class FCrashlyticsOutputDevice : public FOutputDevice
 {
