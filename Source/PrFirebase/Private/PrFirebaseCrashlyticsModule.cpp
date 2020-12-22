@@ -123,6 +123,11 @@ public:
 	}
 };
 
+void UPrFirebaseCrashlyticsModule::WriteError(const FString& Log)
+{
+	WriteError(Log, 0, TMap<FString, FString>{});
+}
+
 void UPrFirebaseCrashlyticsModule::CatchEngineLogs()
 {
 	check(GLog);
