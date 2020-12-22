@@ -36,10 +36,18 @@ void UPrFirebaseCrashlyticsModule_Android::WriteLog(const FString& Log)
 	}
 }
 
-void UPrFirebaseCrashlyticsModule_Android::WriteError(const FString& Log, int32 Code)
+void UPrFirebaseCrashlyticsModule_Android::WriteError(const FString& Log, int32 Code, const TMap<FString, FString>& UserInfo)
 {
 	if (auto Env = FAndroidApplication::GetJavaEnv())
 	{
+		if (UserInfo.Num() > 0)
+		{
+			for (const auto& UserInfoPair : UserInfo)
+			{
+				AddAttribute(UserInfoPair.Key, UserInfoPair.Value);
+			}
+		}
+
 		auto LogJava = Env->NewStringUTF(TCHAR_TO_UTF8(*Log));
 		static auto Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_FirebaseCrashlytics_WriteError", "(Ljava/lang/String;)V", false);
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, LogJava);
