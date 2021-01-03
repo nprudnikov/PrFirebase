@@ -102,7 +102,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Performance|Utils")
 	void AppliactionLaunched();
 
-	virtual bool IsAvailable() const final { return WITH_FIREBASE_PERFORMANCE; }
+	virtual bool IsAvailable() const final override { return WITH_FIREBASE_PERFORMANCE; }
 
 protected:
 	virtual void InternalStartTrace(int32 TraceIndex, const FString& Identifier) { Firebase_NotImplemented(); }

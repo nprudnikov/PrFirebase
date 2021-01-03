@@ -33,7 +33,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Crashlytics|Value")
 	virtual void AddAttribute(const FString& Key, const FString& Value) { Firebase_NotImplemented(); }
 
-	virtual bool IsAvailable() const final { return WITH_FIREBASE_CRASHLYTICS; }
+	virtual bool IsAvailable() const final override { return WITH_FIREBASE_CRASHLYTICS; }
 
 protected:
 	friend class FCrashlyticsOutputDevice;

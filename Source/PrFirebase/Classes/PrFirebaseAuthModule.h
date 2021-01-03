@@ -43,5 +43,5 @@ public:
 		return false;
 	}
 
-	virtual bool IsAvailable() const final { return WITH_FIREBASE_CRASHLYTICS; }
+	virtual bool IsAvailable() const final override { return WITH_FIREBASE_CRASHLYTICS; }
 };

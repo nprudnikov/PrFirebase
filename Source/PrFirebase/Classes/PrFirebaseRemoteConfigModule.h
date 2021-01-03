@@ -53,5 +53,5 @@ public:
 		return 0;
 	}
 
-	virtual bool IsAvailable() const final { return WITH_FIREBASE_REMOTECONFIG; }
+	virtual bool IsAvailable() const final override { return WITH_FIREBASE_REMOTECONFIG; }
 };

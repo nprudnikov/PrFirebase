@@ -136,7 +136,7 @@ void UPrFirebaseCrashlyticsModule::CatchEngineLogs()
 	static FCrashlyticsOutputDeviceError ErrorOutput(GError, this);
 	GError = &ErrorOutput;
 
-	auto PlatformOutputDevices = FPlatformOutputDevices::GetLog();
+	const auto PlatformOutputDevices = FPlatformOutputDevices::GetLog();
 	check(PlatformOutputDevices)
 		check(GLog->IsRedirectingTo(PlatformOutputDevices));
 	GLog->RemoveOutputDevice(PlatformOutputDevices);
