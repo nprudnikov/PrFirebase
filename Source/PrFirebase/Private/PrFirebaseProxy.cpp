@@ -102,9 +102,9 @@ void UPrFirebaseProxy::CreateModules()
 	for (auto& Pair : ModuleClasses)
 	{
 		auto InterfaceClass = Pair.Key;
-		auto ModuleClass = Pair.Value;
+		const auto ModuleClass = Pair.Value;
 
-		auto Interface = GetDefault<UPrFirebaseModule>(InterfaceClass);
+		const auto Interface = GetDefault<UPrFirebaseModule>(InterfaceClass);
 		if (Interface->IsAvailable())
 		{
 			auto Module = NewObject<UPrFirebaseModule>(this, ModuleClass);

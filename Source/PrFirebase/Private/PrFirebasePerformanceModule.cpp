@@ -98,7 +98,7 @@ UPrFirebasePerformanceModule::UPrFirebasePerformanceModule()
 
 void UPrFirebasePerformanceModule::SetAttributeForAllTraces(const FString& Name, const FString& Value)
 {
-	bool bContains = GlobalAttributes.Contains(Name);
+	const bool bContains = GlobalAttributes.Contains(Name);
 	if (bContains && GlobalAttributes.FindChecked(Name) == Value)
 	{
 		return;
@@ -113,7 +113,7 @@ void UPrFirebasePerformanceModule::SetAttributeForAllTraces(const FString& Name,
 
 void UPrFirebasePerformanceModule::RemoveAttributeForAllTraces(const FString& Name)
 {
-	bool bContains = GlobalAttributes.Contains(Name);
+	const bool bContains = GlobalAttributes.Contains(Name);
 	if (bContains)
 	{
 		GlobalAttributes.Remove(Name);
@@ -126,7 +126,7 @@ void UPrFirebasePerformanceModule::RemoveAttributeForAllTraces(const FString& Na
 
 void UPrFirebasePerformanceModule::SetMetricForAllTraces(const FString& Name, int32 Value)
 {
-	bool bContains = GlobalMetrics.Contains(Name);
+	const bool bContains = GlobalMetrics.Contains(Name);
 	if (bContains && GlobalMetrics.FindChecked(Name) == Value)
 	{
 		return;
