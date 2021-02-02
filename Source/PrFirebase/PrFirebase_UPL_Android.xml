@@ -8,7 +8,7 @@
 		<setBoolFromProperty result="bFirebaseCrashlyticsEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseCrashlyticsEnable" default="false"/>
 		<setBoolFromProperty result="bFirebaseRemoteConfigEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseRemoteConfigEnable" default="false"/>
 		<setBoolFromProperty result="bFirebasePerformanceEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebasePerformanceEnable" default="false"/>
-	</init>
+  </init>
 
 	<androidManifestUpdates>
 		<if condition="bFirebaseEnable">
@@ -20,6 +20,9 @@
 						</addElements>
 					</true>
 				</if>
+
+				<!-- Force disable heap pointer tagging as it's required for Crashlytics NDK version 17.3.0 -->
+				<addAttribute tag="application" name="android:allowNativeHeapPointerTagging" value="false"/>
 			</true>
 		</if>
 	</androidManifestUpdates>
@@ -53,7 +56,7 @@
 					}
 
 					dependencies {
-						classpath 'com.google.gms:google-services:4.3.4'
+						classpath 'com.google.gms:google-services:4.3.5'
 				</insert>
 
 				<if condition="bFirebaseCrashlyticsEnable">
@@ -84,14 +87,13 @@
 			<true>
 				<insert>
 					dependencies {
-						implementation platform('com.google.firebase:firebase-bom:26.1.0')
+						implementation platform('com.google.firebase:firebase-bom:26.4.0')
 						implementation 'com.google.firebase:firebase-analytics'
 				</insert>
 
 				<if condition="bFirebaseCrashlyticsEnable">
 					<true>
 						<insert>
-							implementation 'com.google.firebase:firebase-crashlytics'
 							implementation 'com.google.firebase:firebase-crashlytics-ndk'
 						</insert>
 					</true>
