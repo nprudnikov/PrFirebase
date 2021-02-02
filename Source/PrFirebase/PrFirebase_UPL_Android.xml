@@ -8,7 +8,7 @@
 		<setBoolFromProperty result="bFirebaseCrashlyticsEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseCrashlyticsEnable" default="false"/>
 		<setBoolFromProperty result="bFirebaseRemoteConfigEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseRemoteConfigEnable" default="false"/>
 		<setBoolFromProperty result="bFirebasePerformanceEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebasePerformanceEnable" default="false"/>
-  </init>
+	</init>
 
 	<androidManifestUpdates>
 		<if condition="bFirebaseEnable">
