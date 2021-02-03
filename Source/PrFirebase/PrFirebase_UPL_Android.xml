@@ -87,6 +87,8 @@
 			<true>
 				<insert>
 					dependencies {
+						implementation 'com.google.android.gms:play-services-games:21.0.0'
+
 						implementation platform('com.google.firebase:firebase-bom:26.4.0')
 						implementation 'com.google.firebase:firebase-analytics'
 				</insert>
