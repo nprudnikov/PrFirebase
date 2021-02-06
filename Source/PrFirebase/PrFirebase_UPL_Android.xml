@@ -206,9 +206,15 @@
 							PrFirebase.crashlyticsProxy().writeLog(Log);
 						}
 
-						public void AndroidThunkJava_FirebaseCrashlytics_WriteError(String Log)
+						public void AndroidThunkJava_FirebaseCrashlytics_WriteError(String ErrorMessage)
 						{
-							PrFirebase.crashlyticsProxy().writeException(new RuntimeException(String.format("%s", Log)));
+							RuntimeException ex = new RuntimeException(String.format("%s", ErrorMessage)); 
+							StackTraceElement[] trace = new StackTraceElement[] {
+								new StackTraceElement(ErrorMessage, "java", null, -2),
+							};
+
+							ex.setStackTrace(trace); 
+							PrFirebase.crashlyticsProxy().writeException(ex);
 						}
 
 						public void AndroidThunkJava_FirebaseCrashlytics_AddAttribute(String Key, String Value)
