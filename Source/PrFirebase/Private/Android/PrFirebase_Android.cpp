@@ -6,8 +6,8 @@
 
 #if WITH_FIREBASE && PLATFORM_ANDROID
 #include "Android/PrFirebaseCrashlyticsModule_Android.h"
-#include "Android/PrFirebaseRemoteConfigModule_Android.h"
 #include "Android/PrFirebasePerformanceModule_Android.h"
+#include "Android/PrFirebaseRemoteConfigModule_Android.h"
 #include "PrFirebaseAuthModule.h"
 #include "PrFirebasePerformanceModule.h"
 #include "PrFirebaseRemoteConfigModule.h"
