@@ -51,7 +51,6 @@
 				<insert>
 					repositories {
 						google()
-
 						jcenter()
 					}
 
@@ -195,6 +194,8 @@
 						{
 							
 						}
+            
+            // Firebase Crashlytics
 
 						public void AndroidThunkJava_FirebaseCrashlytics_SetUserIdentifier(String UserIdentifier)
 						{
@@ -220,6 +221,38 @@
 						public void AndroidThunkJava_FirebaseCrashlytics_AddAttribute(String Key, String Value)
 						{
 							PrFirebase.crashlyticsProxy().addAttribute(Key, Value);
+						}
+            
+            // FirebasePerformance
+            
+            public void AndroidThunkJava_FirebasePerformance_StartTrace(int index, String identifier)
+						{
+							PrFirebase.performanceProxy().startTrace(index, identifier);
+						}
+            
+            public void AndroidThunkJava_FirebasePerformance_StopTrace(int index)
+						{
+							PrFirebase.performanceProxy().stopTrace(index);
+						}
+            
+            public void AndroidThunkJava_FirebasePerformance_IncrementMetric(int index, String name, int value)
+						{
+							PrFirebase.performanceProxy().incrementMetric(index, name, value);
+						}
+            
+            public void AndroidThunkJava_FirebasePerformance_SetMetric(int index, String name, int value)
+						{
+							PrFirebase.performanceProxy().setMetric(index, name, value);
+						}
+            
+            public void AndroidThunkJava_FirebasePerformance_SetAttribute(int index, String name, String value)
+						{
+							PrFirebase.performanceProxy().setAttribute(index, name, value);
+						}
+            
+            public void AndroidThunkJava_FirebasePerformance_RemoveAttribute(int index, String name)
+						{
+							PrFirebase.performanceProxy().removeAttribute(index, name);
 						}
 					]]>
 				</insert>
