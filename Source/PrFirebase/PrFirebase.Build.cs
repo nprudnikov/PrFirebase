@@ -37,8 +37,10 @@ namespace UnrealBuildTool.Rules
                 new string[] {
                     "Core",
                     "CoreUObject",
-                    "Engine"
-                });
+                    "Engine",
+					"RenderCore",
+					"RHI"
+				});
 
             PrivateIncludePathModuleNames.AddRange(
                 new string[] {

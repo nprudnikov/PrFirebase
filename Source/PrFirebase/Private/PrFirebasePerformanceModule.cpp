@@ -6,8 +6,23 @@
 #include "PrFirebaseSettings.h"
 
 #include "Async/Async.h"
+#include "DeviceProfiles/DeviceProfile.h"
+#include "DeviceProfiles/DeviceProfileManager.h"
+#include "GenericPlatform/GenericPlatformMisc.h"
+#include "HAL/IConsoleManager.h"
+#include "HAL/PlatformApplicationMisc.h"
+#include "RHI.h"
+#include "RenderCore.h"
 
 #define MIN_SYNC_TIME 0.5f
+
+FPrFirebaseSyncAccum::FPrFirebaseSyncAccum()
+	: FrameCounter(0)
+	, GameThreadTimeMs(0.f)
+	, RenderThreadTimeMs(0.f)
+	, RHIThreadTimeMs(0.f)
+{
+}
 
 FPrFirebasePerformanceTrace::FPrFirebasePerformanceTrace()
 	: TraceIndex(-1)
@@ -92,7 +107,6 @@ UPrFirebasePerformanceModule::UPrFirebasePerformanceModule()
 	: LastTraceIndex(0)
 	, bAppliactionLaunched(false)
 	, bAppliactionFirstFrame(false)
-	, AvFrameCounter(0)
 {
 }
 
@@ -326,6 +340,21 @@ void UPrFirebasePerformanceModule::StartWatch()
 	check(!GPrFirebasePerformanceModule.IsValid());
 	GPrFirebasePerformanceModule = this;
 
+	UDeviceProfile* DeviceProfile = UDeviceProfileManager::Get().GetActiveProfile();
+	if (DeviceProfile)
+	{
+		DeviceProfileName = DeviceProfile->GetName();
+	}
+	else
+	{
+		DeviceProfileName = TEXT("Unknown");
+	}
+
+	DeviceChipset = FPlatformMisc::GetCPUChipset();
+	DeviceBrand = FPlatformMisc::GetCPUBrand();
+	DeviceVendor = FPlatformMisc::GetCPUVendor();
+	DeviceNumberOfCores = FString::FromInt(FPlatformMisc::NumberOfCores());
+
 	auto WeakThis = MakeWeakObjectPtr(this);
 	FCoreDelegates::OnEndFrame.AddLambda([WeakThis]() {
 		if (WeakThis.IsValid())
@@ -376,6 +405,8 @@ void UPrFirebasePerformanceModule::OnAppliactionLaunched()
 
 void UPrFirebasePerformanceModule::OnEndFrame()
 {
+	static const IConsoleVariable* CVarMaxFPS = IConsoleManager::Get().FindConsoleVariable(TEXT("t.MaxFPS"));
+
 	if (!bAppliactionLaunched)
 	{
 		return;
@@ -390,7 +421,11 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 	const FDateTime Now = FDateTime::UtcNow();
 	if (AvFrameTrace.IsSet() && AvFrameTime.IsSet())
 	{
-		++AvFrameCounter;
+		AvFrameAccum.FrameCounter++;
+		AvFrameAccum.GameThreadTimeMs += FPlatformTime::ToMilliseconds(GGameThreadTime);
+		AvFrameAccum.RenderThreadTimeMs += FPlatformTime::ToMilliseconds(GRenderThreadTime);
+		AvFrameAccum.RHIThreadTimeMs += FPlatformTime::ToMilliseconds(GRHIThreadTime);
+
 		const float Delta = (Now - AvFrameTime.GetValue()).GetTotalSeconds();
 		static float SyncsTime = GetDefault<UPrFirebaseSettings>()->FirebasePerformance_SyncTime;
 		if (SyncsTime < MIN_SYNC_TIME)
@@ -400,8 +435,35 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 
 		if (Delta >= SyncsTime)
 		{
-			const int32 FPS = FMath::RoundToInt(static_cast<float>(AvFrameCounter) / Delta);
-			AvFrameTrace->SetMetric(TEXT("av_fps"), FPS);
+			if (AvFrameAccum.FrameCounter > 0)
+			{
+				const float FloatFrameCounter = static_cast<float>(AvFrameAccum.FrameCounter);
+				const float floatFPS = FloatFrameCounter / Delta;
+				AvFrameTrace->SetMetric(TEXT("av_fps"), FMath::RoundToInt(floatFPS));
+				AvFrameTrace->SetMetric(TEXT("av_fps_rel"), FMath::RoundToInt((floatFPS / CVarMaxFPS->GetFloat()) * 100.f));
+
+				const float MaxTimeMs = 1000.f / floatFPS;
+				const float AvGameThreadTimeMs = AvFrameAccum.GameThreadTimeMs / FloatFrameCounter;
+				const float AvRenderThreadTimeMs = AvFrameAccum.RenderThreadTimeMs / FloatFrameCounter;
+				const float AvRHIThreadTimeMs = AvFrameAccum.RHIThreadTimeMs / FloatFrameCounter;
+
+				AvFrameTrace->SetMetric(TEXT("av_game_time_mks"), FMath::RoundToInt(AvGameThreadTimeMs * 1000.f));
+				AvFrameTrace->SetMetric(TEXT("av_game_time_rel"), FMath::RoundToInt((AvGameThreadTimeMs / MaxTimeMs) * 100.f));
+
+				AvFrameTrace->SetMetric(TEXT("av_render_time_mks"), FMath::RoundToInt(AvRenderThreadTimeMs * 1000.f));
+				AvFrameTrace->SetMetric(TEXT("av_render_time_rel"), FMath::RoundToInt((AvRenderThreadTimeMs / MaxTimeMs) * 100.f));
+
+				if (AvRHIThreadTimeMs > KINDA_SMALL_NUMBER)
+				{
+					AvFrameTrace->SetMetric(TEXT("av_rhi_time_mks"), FMath::RoundToInt(AvRHIThreadTimeMs * 1000.f));
+					AvFrameTrace->SetMetric(TEXT("av_rhi_time_rel"), FMath::RoundToInt((AvRHIThreadTimeMs / MaxTimeMs) * 100.f));
+				}
+
+				const float AvTotalThreadTimeMs = AvGameThreadTimeMs + AvRenderThreadTimeMs + AvRHIThreadTimeMs;
+				AvFrameTrace->SetMetric(TEXT("av_total_time_mks"), FMath::RoundToInt(AvTotalThreadTimeMs * 1000.f));
+				AvFrameTrace->SetMetric(TEXT("av_total_time_rel"), FMath::RoundToInt((AvTotalThreadTimeMs / MaxTimeMs) * 100.f));
+			}
+
 			AvFrameTrace->Stop();
 			AvFrameTrace.Reset();
 		}
@@ -411,7 +473,15 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 	{
 		AvFrameTrace = StartTrace(TEXT("pr_av_frame"));
 		AvFrameTime = Now;
-		AvFrameCounter = 0;
+		AvFrameAccum = {};
+
+		AvFrameTrace->SetAttribute(TEXT("FPS"), CVarMaxFPS->GetString());
+		AvFrameTrace->SetAttribute(TEXT("Adapter"), GRHIAdapterName);
+		AvFrameTrace->SetAttribute(TEXT("Profile"), DeviceProfileName);
+		AvFrameTrace->SetAttribute(TEXT("Vendor"), DeviceVendor);
+		AvFrameTrace->SetAttribute(TEXT("Brand"), DeviceBrand);
+		AvFrameTrace->SetAttribute(TEXT("Chipset"), DeviceChipset);
+		AvFrameTrace->SetAttribute(TEXT("Cores"), DeviceNumberOfCores);
 	}
 }
 

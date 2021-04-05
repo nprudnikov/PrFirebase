@@ -12,6 +12,16 @@
 
 class UPrFirebasePerformanceModule;
 
+struct FPrFirebaseSyncAccum
+{
+	int64 FrameCounter;
+	float GameThreadTimeMs;
+	float RenderThreadTimeMs;
+	float RHIThreadTimeMs;
+
+	FPrFirebaseSyncAccum();
+};
+
 USTRUCT(Blueprintable, BlueprintType)
 struct FPrFirebasePerformanceTrace
 {
@@ -126,6 +136,16 @@ protected:
 	void StartWatch();
 
 private:
+	FString DeviceProfileName;
+
+	FString DeviceChipset;
+
+	FString DeviceBrand;
+
+	FString DeviceVendor;
+
+	FString DeviceNumberOfCores;
+
 	int32 LastTraceIndex;
 
 	bool bAppliactionLaunched;
@@ -144,7 +164,7 @@ private:
 
 	TOptional<FDateTime> AvFrameTime;
 
-	int64 AvFrameCounter;
+	FPrFirebaseSyncAccum AvFrameAccum;
 
 	void OnAppliactionLaunched();
 
