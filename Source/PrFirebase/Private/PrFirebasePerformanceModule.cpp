@@ -24,6 +24,67 @@ FPrFirebaseSyncAccum::FPrFirebaseSyncAccum()
 {
 }
 
+FPrFirebaseTimeline::FPrFirebaseTimeline()
+{
+}
+
+void FPrFirebaseTimeline::Add(int32 Value, const FDateTime& Time)
+{
+	if (Timeline.Num() == 0 || Timeline.Last().Get<0>() != Value)
+	{
+		Timeline.Add(TTuple<int32, FDateTime>(Value, Time));
+	}
+}
+
+bool FPrFirebaseTimeline::IsChanged() const
+{
+	return Timeline.Num() > 1;
+}
+
+bool FPrFirebaseTimeline::HasValue() const
+{
+	return Timeline.Num() > 0;
+}
+
+FPrFirebaseTimelineDelta FPrFirebaseTimeline::GetDelta() const
+{
+	if (Timeline.Num() > 1)
+	{
+		const auto& First = Timeline[0];
+		const auto& Last = Timeline.Last();
+		const auto Delta = Last.Get<0>() - First.Get<0>();
+		const auto DeltaTime = static_cast<float>((Last.Get<1>() - First.Get<1>()).GetTotalSeconds());
+
+		return {Delta, DeltaTime};
+	}
+
+	return {0, 0.f};
+}
+
+int32 FPrFirebaseTimeline::GetValue() const
+{
+	if (Timeline.Num() > 0)
+	{
+		return Timeline.Last().Get<0>();
+	}
+
+	return 0;
+}
+
+void FPrFirebaseTimeline::Reset()
+{
+	if (Timeline.Num() > 1)
+	{
+		auto Last = Timeline.Last();
+		Timeline.Reset();
+		Timeline.Add(std::move(Last));
+	}
+}
+
+FPrFirebaseDeviceTimelines::FPrFirebaseDeviceTimelines()
+{
+}
+
 FPrFirebasePerformanceTrace::FPrFirebasePerformanceTrace()
 	: TraceIndex(-1)
 {
@@ -272,29 +333,30 @@ void UPrFirebasePerformanceModule::InternalLaunch_AnyThread()
 void UPrFirebasePerformanceModule::SetTemperature(FCoreDelegates::ETemperatureSeverity Temp)
 {
 	FString TempStr = TEXT("Unknown");
+	const auto Now = FDateTime::UtcNow();
 	switch (Temp)
 	{
 	case FCoreDelegates::ETemperatureSeverity::Good:
 	{
-		SetMetricForAllTraces("temp", 0);
+		DeviceTimelines.HeatingLevel.Add(0, Now);
 		TempStr = TEXT("Good");
 	}
 	break;
 	case FCoreDelegates::ETemperatureSeverity::Bad:
 	{
-		SetMetricForAllTraces("temp", 1);
+		DeviceTimelines.HeatingLevel.Add(1, Now);
 		TempStr = TEXT("Bad");
 	}
 	break;
 	case FCoreDelegates::ETemperatureSeverity::Serious:
 	{
-		SetMetricForAllTraces("temp", 2);
+		DeviceTimelines.HeatingLevel.Add(2, Now);
 		TempStr = TEXT("Serious");
 	}
 	break;
 	case FCoreDelegates::ETemperatureSeverity::Critical:
 	{
-		SetMetricForAllTraces("temp", 3);
+		DeviceTimelines.HeatingLevel.Add(3, Now);
 		TempStr = TEXT("Critical");
 	}
 	break;
@@ -306,28 +368,6 @@ void UPrFirebasePerformanceModule::SetTemperature(FCoreDelegates::ETemperatureSe
 #endif
 
 	UE_LOG(LogPerformance, Display, TEXT("Temperature: %s"), *TempStr);
-}
-
-void UPrFirebasePerformanceModule::SetPowerMode(bool bLowPowerMode)
-{
-	FString PowerModeStr = TEXT("Unknown");
-	if (bLowPowerMode)
-	{
-		SetMetricForAllTraces("low_power", 1);
-		PowerModeStr = TEXT("Low");
-	}
-	else
-	{
-		SetMetricForAllTraces("low_power", 0);
-		PowerModeStr = TEXT("Normal");
-	}
-
-#if WITH_FIREBASE_CRASHLYTICS
-	auto CrashlyticsModule = UPrFirebaseLibrary::GetFirebaseProxy()->GetCrashlyticsModule();
-	CrashlyticsModule->AddAttribute(TEXT("PowerMode"), PowerModeStr);
-#endif
-
-	UE_LOG(LogPerformance, Display, TEXT("PowerMode: %s"), *PowerModeStr);
 }
 
 void UPrFirebasePerformanceModule::StartWatch()
@@ -350,10 +390,10 @@ void UPrFirebasePerformanceModule::StartWatch()
 		DeviceProfileName = TEXT("Unknown");
 	}
 
-	DeviceChipset = FPlatformMisc::GetCPUChipset();
 	DeviceBrand = FPlatformMisc::GetCPUBrand();
-	DeviceVendor = FPlatformMisc::GetCPUVendor();
-	DeviceNumberOfCores = FString::FromInt(FPlatformMisc::NumberOfCores());
+	DeviceChipset = FString::Printf(TEXT("%s | %d"), *FPlatformMisc::GetCPUChipset(), FPlatformMisc::NumberOfCores());
+
+	UpdateDeviceTimelines(FDateTime::UtcNow(), false);
 
 	auto WeakThis = MakeWeakObjectPtr(this);
 	FCoreDelegates::OnEndFrame.AddLambda([WeakThis]() {
@@ -368,15 +408,6 @@ void UPrFirebasePerformanceModule::StartWatch()
 			if (WeakThis.IsValid())
 			{
 				WeakThis->SetTemperature(Temp);
-			}
-		});
-	});
-
-	FCoreDelegates::OnLowPowerMode.AddLambda([WeakThis](bool bLowPowerMode) {
-		AsyncTask(ENamedThreads::GameThread, [WeakThis, bLowPowerMode]() {
-			if (WeakThis.IsValid())
-			{
-				WeakThis->SetPowerMode(bLowPowerMode);
 			}
 		});
 	});
@@ -464,6 +495,10 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 				AvFrameTrace->SetMetric(TEXT("av_total_time_rel"), FMath::RoundToInt((AvTotalThreadTimeMs / MaxTimeMs) * 100.f));
 			}
 
+			UpdateDeviceTimelines(Now, true);
+
+			AvFrameTrace->SetMetric(TEXT("metric_time_mks"), FMath::RoundToInt((FDateTime::UtcNow() - Now).GetTotalMicroseconds()));
+
 			AvFrameTrace->Stop();
 			AvFrameTrace.Reset();
 		}
@@ -475,13 +510,70 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 		AvFrameTime = Now;
 		AvFrameAccum = {};
 
-		AvFrameTrace->SetAttribute(TEXT("FPS"), CVarMaxFPS->GetString());
-		AvFrameTrace->SetAttribute(TEXT("Adapter"), GRHIAdapterName);
 		AvFrameTrace->SetAttribute(TEXT("Profile"), DeviceProfileName);
-		AvFrameTrace->SetAttribute(TEXT("Vendor"), DeviceVendor);
+
+#if !PLATFORM_IOS
+		AvFrameTrace->SetAttribute(TEXT("Adapter"), GRHIAdapterName);
 		AvFrameTrace->SetAttribute(TEXT("Brand"), DeviceBrand);
 		AvFrameTrace->SetAttribute(TEXT("Chipset"), DeviceChipset);
-		AvFrameTrace->SetAttribute(TEXT("Cores"), DeviceNumberOfCores);
+#endif // !PLATFORM_IOS
+	}
+}
+
+void UPrFirebasePerformanceModule::UpdateDeviceTimelines(const FDateTime& Now, bool bSync)
+{
+	const auto BatteryLevel = FPlatformMisc::GetBatteryLevel();
+	if (BatteryLevel >= 0)
+	{
+		DeviceTimelines.BatteryLevel.Add(BatteryLevel, Now);
+	}
+
+	const auto DeviceVolume = FPlatformMisc::GetDeviceVolume();
+	if (DeviceVolume >= 0)
+	{
+		DeviceTimelines.VolumeLevel.Add(DeviceVolume, Now);
+	}
+
+	if (bSync && AvFrameTrace.IsSet())
+	{
+		if (DeviceTimelines.BatteryLevel.IsChanged())
+		{
+			if (FPlatformMisc::IsRunningOnBattery())
+			{
+				const auto TimelineDelta = DeviceTimelines.BatteryLevel.GetDelta();
+				if (TimelineDelta.Value < 0)
+				{
+					const auto dSec = TimelineDelta.Seconds / static_cast<float>(-TimelineDelta.Value);
+					AvFrameTrace->SetMetric(TEXT("battery_down"), FMath::RoundToInt(dSec));
+				}
+			}
+
+			DeviceTimelines.BatteryLevel.Reset();
+		}
+
+		if (DeviceTimelines.VolumeLevel.IsChanged())
+		{
+			const auto VolumeLevel = DeviceTimelines.VolumeLevel.GetValue();
+			AvFrameTrace->SetMetric(TEXT("volume"), VolumeLevel);
+			DeviceTimelines.VolumeLevel.Reset();
+		}
+
+		if (DeviceTimelines.HeatingLevel.IsChanged())
+		{
+			const auto Delta = DeviceTimelines.HeatingLevel.GetDelta();
+			if (Delta.Value > 0)
+			{
+				const auto Sec = Delta.Seconds / static_cast<float>(Delta.Value);
+				AvFrameTrace->SetMetric(TEXT("heating_up"), FMath::RoundToInt(Sec));
+			}
+			else if (Delta.Value < 0)
+			{
+				const auto Sec = Delta.Seconds / static_cast<float>(-Delta.Value);
+				AvFrameTrace->SetMetric(TEXT("heating_down"), FMath::RoundToInt(Sec));
+			}
+
+			DeviceTimelines.HeatingLevel.Reset();
+		}
 	}
 }
 

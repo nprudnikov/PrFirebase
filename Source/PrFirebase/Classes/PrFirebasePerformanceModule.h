@@ -22,6 +22,41 @@ struct FPrFirebaseSyncAccum
 	FPrFirebaseSyncAccum();
 };
 
+struct FPrFirebaseTimelineDelta
+{
+	int32 Value;
+	float Seconds;
+};
+
+struct FPrFirebaseTimeline
+{
+	FPrFirebaseTimeline();
+
+	void Add(int32 Value, const FDateTime& Time);
+
+	bool IsChanged() const;
+
+	bool HasValue() const;
+
+	FPrFirebaseTimelineDelta GetDelta() const;
+
+	int32 GetValue() const;
+
+	void Reset();
+
+private:
+	TArray<TTuple<int32, FDateTime>> Timeline;
+};
+
+struct FPrFirebaseDeviceTimelines
+{
+	FPrFirebaseTimeline BatteryLevel;
+	FPrFirebaseTimeline VolumeLevel;
+	FPrFirebaseTimeline HeatingLevel;
+
+	FPrFirebaseDeviceTimelines();
+};
+
 USTRUCT(Blueprintable, BlueprintType)
 struct FPrFirebasePerformanceTrace
 {
@@ -131,8 +166,6 @@ protected:
 
 	void SetTemperature(FCoreDelegates::ETemperatureSeverity Temp);
 
-	void SetPowerMode(bool bLowPowerMode);
-
 	void StartWatch();
 
 private:
@@ -141,10 +174,6 @@ private:
 	FString DeviceChipset;
 
 	FString DeviceBrand;
-
-	FString DeviceVendor;
-
-	FString DeviceNumberOfCores;
 
 	int32 LastTraceIndex;
 
@@ -166,9 +195,13 @@ private:
 
 	FPrFirebaseSyncAccum AvFrameAccum;
 
+	FPrFirebaseDeviceTimelines DeviceTimelines;
+
 	void OnAppliactionLaunched();
 
 	void OnEndFrame();
+
+	void UpdateDeviceTimelines(const FDateTime& Now, bool bSync);
 };
 
 #define PRF_SCOPE_TIME(_Identifier_) \

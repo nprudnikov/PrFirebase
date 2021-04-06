@@ -75,13 +75,10 @@ void UPrFirebasePerformanceModule_iOS::PostInitialize_AnyThread()
 			break;
 		}
 
-		bool bLowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
-
-		AsyncTask(ENamedThreads::GameThread, [WeakThis = MakeWeakObjectPtr(this), Temp, bLowPowerMode]() {
+		AsyncTask(ENamedThreads::GameThread, [WeakThis = MakeWeakObjectPtr(this), Temp]() {
 			if (WeakThis.IsValid())
 			{
 				WeakThis->SetTemperature(Temp);
-				WeakThis->SetPowerMode(bLowPowerMode);
 			}
 		});
 	}

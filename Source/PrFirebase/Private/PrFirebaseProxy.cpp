@@ -55,7 +55,6 @@ void UPrFirebaseProxy::SetUserIdentifier(const FString& UserIdentifier)
 {
 	check(bInitialized);
 	GetCrashlyticsModule()->SetUserIdentifier(UserIdentifier);
-	GetPerformanceModule()->SetAttributeForAllTraces("user_identifier", UserIdentifier);
 }
 
 void UPrFirebaseProxy::InitializeModuleList()
