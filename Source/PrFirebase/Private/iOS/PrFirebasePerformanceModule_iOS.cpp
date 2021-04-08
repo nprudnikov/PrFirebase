@@ -55,35 +55,6 @@ void UPrFirebasePerformanceModule_iOS::PostInitialize_AnyThread()
 
 	InternalLaunch_AnyThread();
 
-#if !PLATFORM_TVOS
-	if (@available(iOS 11, *))
-	{
-		FCoreDelegates::ETemperatureSeverity Temp = FCoreDelegates::ETemperatureSeverity::Good;
-		switch ([[NSProcessInfo processInfo] thermalState])
-		{
-		case NSProcessInfoThermalStateNominal:
-			Temp = FCoreDelegates::ETemperatureSeverity::Good;
-			break;
-		case NSProcessInfoThermalStateFair:
-			Temp = FCoreDelegates::ETemperatureSeverity::Bad;
-			break;
-		case NSProcessInfoThermalStateSerious:
-			Temp = FCoreDelegates::ETemperatureSeverity::Serious;
-			break;
-		case NSProcessInfoThermalStateCritical:
-			Temp = FCoreDelegates::ETemperatureSeverity::Critical;
-			break;
-		}
-
-		AsyncTask(ENamedThreads::GameThread, [WeakThis = MakeWeakObjectPtr(this), Temp]() {
-			if (WeakThis.IsValid())
-			{
-				WeakThis->SetTemperature(Temp);
-			}
-		});
-	}
-#endif
-
 	AsyncTask(ENamedThreads::GameThread, [WeakThis = MakeWeakObjectPtr(this)]() {
 		if (WeakThis.IsValid())
 		{

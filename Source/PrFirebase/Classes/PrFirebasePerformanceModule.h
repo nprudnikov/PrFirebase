@@ -12,6 +12,9 @@
 
 class UPrFirebasePerformanceModule;
 
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebaseSyncAccum
+
 struct FPrFirebaseSyncAccum
 {
 	int64 FrameCounter;
@@ -22,11 +25,17 @@ struct FPrFirebaseSyncAccum
 	FPrFirebaseSyncAccum();
 };
 
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebaseTimelineDelta
+
 struct FPrFirebaseTimelineDelta
 {
 	int32 Value;
 	float Seconds;
 };
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebaseTimeline
 
 struct FPrFirebaseTimeline
 {
@@ -38,15 +47,21 @@ struct FPrFirebaseTimeline
 
 	bool HasValue() const;
 
+	int32 GetCount() const;
+
 	FPrFirebaseTimelineDelta GetDelta() const;
 
 	int32 GetValue() const;
 
-	void Reset();
+	void Reset(bool bFully = false);
 
 private:
 	TArray<TTuple<int32, FDateTime>> Timeline;
+	int32 Count;
 };
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebaseDeviceTimelines
 
 struct FPrFirebaseDeviceTimelines
 {
@@ -55,7 +70,12 @@ struct FPrFirebaseDeviceTimelines
 	FPrFirebaseTimeline HeatingLevel;
 
 	FPrFirebaseDeviceTimelines();
+
+	void Reset(bool bFully = false);
 };
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebasePerformanceTrace
 
 USTRUCT(Blueprintable, BlueprintType)
 struct FPrFirebasePerformanceTrace
@@ -89,6 +109,9 @@ private:
 	int32 TraceIndex;
 };
 
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebasePerformanceScopeTimeTrace
+
 USTRUCT()
 struct FPrFirebasePerformanceScopeTimeTrace
 {
@@ -105,6 +128,9 @@ private:
 	TOptional<FPrFirebasePerformanceTrace> Trace;
 };
 
+//////////////////////////////////////////////////////////////////////////
+// UPrFirebasePerformanceModule
+
 UCLASS()
 class PRFIREBASE_API UPrFirebasePerformanceModule : public UPrFirebaseModule
 {
@@ -112,15 +138,6 @@ class PRFIREBASE_API UPrFirebasePerformanceModule : public UPrFirebaseModule
 
 public:
 	UPrFirebasePerformanceModule();
-
-	UFUNCTION(BlueprintCallable, Category = "Firebase|Performance|Trace")
-	void SetAttributeForAllTraces(const FString& Name, const FString& Value);
-
-	UFUNCTION(BlueprintCallable, Category = "Firebase|Performance|Trace")
-	void RemoveAttributeForAllTraces(const FString& Name);
-
-	UFUNCTION(BlueprintCallable, Category = "Firebase|Performance|Trace")
-	void SetMetricForAllTraces(const FString& Name, int32 Value);
 
 	int32 StartTraceWithoutWrapper(const FString& Identifier);
 
@@ -144,12 +161,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Performance|Trace")
 	void RemoveAttribute(const FPrFirebasePerformanceTrace& Trace, const FString& Name);
 
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Performance|Frame")
+	void SetFrameTraceCategory(const FString& Key, const FString& Category);
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Performance|Frame")
+	void ResetFrameTraceCategory(const FString& Key);
+
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Performance|Utils")
 	void AppliactionLaunched();
 
 	virtual bool IsAvailable() const final override { return WITH_FIREBASE_PERFORMANCE; }
 
 protected:
+	void UpdatePostfix();
+
 	virtual void InternalStartTrace(int32 TraceIndex, const FString& Identifier) { Firebase_NotImplemented(); }
 
 	virtual void InternalStopTrace(int32 TraceIndex) { Firebase_NotImplemented(); }
@@ -164,44 +189,44 @@ protected:
 
 	void InternalLaunch_AnyThread();
 
-	void SetTemperature(FCoreDelegates::ETemperatureSeverity Temp);
-
 	void StartWatch();
 
 private:
-	FString DeviceProfileName;
-
-	FString DeviceChipset;
-
-	FString DeviceBrand;
-
 	int32 LastTraceIndex;
 
 	bool bAppliactionLaunched;
 
 	bool bAppliactionFirstFrame;
 
-	TMap<FString, FString> GlobalAttributes;
-
-	TMap<FString, int32> GlobalMetrics;
-
 	TSet<int32> ExistingTraceIndices;
+
+	TMap<FString, FString> FrameTraceCategories;
+
+	FString FramePostfix;
 
 	TOptional<FPrFirebasePerformanceTrace> AppLaunchTrace;
 
-	TOptional<FPrFirebasePerformanceTrace> AvFrameTrace;
-
-	TOptional<FDateTime> AvFrameTime;
+	TOptional<FDateTime> SyncTime;
 
 	FPrFirebaseSyncAccum AvFrameAccum;
 
 	FPrFirebaseDeviceTimelines DeviceTimelines;
+
+	FString DeviceProfileName;
+
+	FString DeviceChipset;
+
+	FString DeviceBrand;
 
 	void OnAppliactionLaunched();
 
 	void OnEndFrame();
 
 	void UpdateDeviceTimelines(const FDateTime& Now, bool bSync);
+
+	void UpdateTraceAttributes(FPrFirebasePerformanceTrace& Trace) const;
+
+	int32 GetTemperature() const;
 };
 
 #define PRF_SCOPE_TIME(_Identifier_) \
