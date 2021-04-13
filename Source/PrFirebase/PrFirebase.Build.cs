@@ -21,9 +21,11 @@ namespace UnrealBuildTool.Rules
             bool bFirebaseRemoteConfigEnable = false;
             bool bFirebaseAuthEnable = false;
             bool bFirebasePerformanceEnable = false;
+            bool bFirebaseAnalyticsEnable = false;
             
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseEnable", out bFirebaseEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseCrashlyticsEnable", out bFirebaseCrashlyticsEnable);
+            EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseAnalyticsEnable", out bFirebaseAnalyticsEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseRemoteConfigEnable", out bFirebaseRemoteConfigEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseAuthEnable", out bFirebaseAuthEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebasePerformanceEnable", out bFirebasePerformanceEnable);
@@ -259,6 +261,7 @@ namespace UnrealBuildTool.Rules
 			
 			PublicDefinitions.Add("WITH_FIREBASE=" + (bFirebaseEnable ? "1" : "0"));
 			PublicDefinitions.Add("WITH_FIREBASE_CRASHLYTICS=" + (bFirebaseEnable && bFirebaseCrashlyticsEnable ? "1" : "0"));
+			PublicDefinitions.Add("WITH_FIREBASE_ANALYTICS=" + (bFirebaseEnable && bFirebaseAnalyticsEnable ? "1" : "0"));
 			PublicDefinitions.Add("WITH_FIREBASE_REMOTECONFIG=" + (bFirebaseEnable && bFirebaseRemoteConfigEnable ? "1" : "0"));
 			PublicDefinitions.Add("WITH_FIREBASE_AUTH=" + (bFirebaseEnable && bFirebaseAuthEnable ? "1" : "0"));
 			PublicDefinitions.Add("WITH_FIREBASE_PERFORMANCE=" + (bFirebaseEnable && bFirebasePerformanceEnable ? "1" : "0"));

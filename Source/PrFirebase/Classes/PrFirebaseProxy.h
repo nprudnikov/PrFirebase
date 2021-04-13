@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "PrFirebaseAnalyticsModule.h"
 #include "PrFirebaseAuthModule.h"
 #include "PrFirebaseCrashlyticsModule.h"
 #include "PrFirebasePerformanceModule.h"
@@ -17,8 +18,12 @@ class PRFIREBASE_API UPrFirebaseProxy : public UObject
 	GENERATED_UCLASS_BODY()
 
 public:
+	
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Crashlytics")
 	UPrFirebaseCrashlyticsModule* GetCrashlyticsModule() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+    UPrFirebaseAnalyticsModule* GetAnalyticsModule() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Firebase|RemoteConfig")
 	UPrFirebaseRemoteConfigModule* GetRemoteConfigModule() const;

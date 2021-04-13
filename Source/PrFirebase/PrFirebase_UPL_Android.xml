@@ -6,6 +6,7 @@
 
 		<setBoolFromProperty result="bFirebaseEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseEnable" default="false"/>
 		<setBoolFromProperty result="bFirebaseCrashlyticsEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseCrashlyticsEnable" default="false"/>
+		<setBoolFromProperty result="bFirebaseAnalyticsEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseAnalyticsEnable" default="false"/>
 		<setBoolFromProperty result="bFirebaseRemoteConfigEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseRemoteConfigEnable" default="false"/>
 		<setBoolFromProperty result="bFirebasePerformanceEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebasePerformanceEnable" default="false"/>
 	</init>
@@ -180,6 +181,11 @@
 				<insert>
 					<![CDATA[
 						import com.pr.firebase.*;
+						import android.os.Bundle;
+						
+						import com.google.firebase.analytics.FirebaseAnalytics;
+						
+						import android.util.Log;
 					]]>
 				</insert>
 			</true>
@@ -192,6 +198,11 @@
 				<insert>
 					<![CDATA[
 						public void AndroidThunkJava_Firebase_Initialize()
+						{
+							
+						}
+						
+						public void AndroidThunkJava_Firebase_InitializeAnalytics()
 						{
 							
 						}
@@ -221,6 +232,30 @@
 						{
 							PrFirebase.crashlyticsProxy().addAttribute(Key, Value);
 						}
+						
+					]]>
+				</insert>
+			</true>
+		</if>
+		<if condition="bFirebaseAnalyticsEnable">
+			<true>
+				<insert>
+					<![CDATA[
+						private FirebaseAnalytics mFirebaseAnalytics;
+						
+						public void AndroidThunkJava_FirebaseAnalytics_TrackEvent(String Name, HashMap<String, String> StringParams, HashMap<String, Float> FloatParams)
+						{			
+							Bundle analyticsparams = new Bundle();
+							
+							for(String key : StringParams.keySet()) {
+								analyticsparams.putString(key, StringParams.get(key));
+							}
+							for(String key : FloatParams.keySet()) {
+								analyticsparams.putFloat(key, FloatParams.get(key));
+							}
+							
+							mFirebaseAnalytics.logEvent(Name, analyticsparams);	
+						}
 					]]>
 				</insert>
 			</true>
@@ -233,6 +268,15 @@
 				<insert>
 					<![CDATA[
 						PrFirebase.initialize(this);
+					]]>
+				</insert>
+			</true>
+		</if>
+		<if condition="bFirebaseAnalyticsEnable">
+			<true>
+				<insert>
+					<![CDATA[
+						mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 					]]>
 				</insert>
 			</true>
