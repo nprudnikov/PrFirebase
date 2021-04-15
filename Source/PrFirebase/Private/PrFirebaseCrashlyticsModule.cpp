@@ -192,7 +192,7 @@ void UPrFirebaseCrashlyticsModule::WriteBlueprintCallstack()
 		{
 			ScriptStack += BlueprintExceptionTracker->GetScriptStack()[FrameIdx]->GetStackDescription() + TEXT("\n");
 		}
-
+	
 		WriteLog(ScriptStack);
 	}
 #endif

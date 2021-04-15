@@ -2,6 +2,7 @@
 
 #include "PrFirebaseProxy.h"
 
+#include "PrFirebaseAnalyticsModule.h"
 #include "PrFirebaseDefines.h"
 #include "PrFirebaseSettings.h"
 
@@ -15,6 +16,12 @@ UPrFirebaseCrashlyticsModule* UPrFirebaseProxy::GetCrashlyticsModule() const
 {
 	check(bInitialized);
 	return CastChecked<UPrFirebaseCrashlyticsModule>(Modules.FindChecked(UPrFirebaseCrashlyticsModule::StaticClass()));
+}
+
+UPrFirebaseAnalyticsModule* UPrFirebaseProxy::GetAnalyticsModule() const
+{
+	check(bInitialized);
+	return CastChecked<UPrFirebaseAnalyticsModule>(Modules.FindChecked(UPrFirebaseAnalyticsModule::StaticClass()));
 }
 
 UPrFirebaseRemoteConfigModule* UPrFirebaseProxy::GetRemoteConfigModule() const
@@ -61,6 +68,7 @@ void UPrFirebaseProxy::InitializeModuleList()
 {
 	ModuleClasses.Add(UPrFirebaseRemoteConfigModule::StaticClass(), UPrFirebaseRemoteConfigModule::StaticClass());
 	ModuleClasses.Add(UPrFirebaseCrashlyticsModule::StaticClass(), UPrFirebaseCrashlyticsModule::StaticClass());
+	ModuleClasses.Add(UPrFirebaseAnalyticsModule::StaticClass(), UPrFirebaseAnalyticsModule::StaticClass());
 	ModuleClasses.Add(UPrFirebasePerformanceModule::StaticClass(), UPrFirebasePerformanceModule::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAuthModule::StaticClass(), UPrFirebaseAuthModule::StaticClass());
 }
@@ -107,12 +115,15 @@ void UPrFirebaseProxy::CreateModules()
 		if (Interface->IsAvailable())
 		{
 			auto Module = NewObject<UPrFirebaseModule>(this, ModuleClass);
+
 			Modules.Add(InterfaceClass, Module);
+			UE_LOG(LogFirebase, Log, TEXT("Module %s created"), *ModuleClass->GetName());
 		}
 		else
 		{
 			auto Module = NewObject<UPrFirebaseModule>(this, InterfaceClass);
 			Modules.Add(InterfaceClass, Module);
+			UE_LOG(LogFirebase, Log, TEXT("Module %s created"), *ModuleClass->GetName());
 		}
 	}
 }
@@ -122,6 +133,7 @@ TArray<UClass*> UPrFirebaseProxy::GetSortedModuleClasses()
 	TArray<UClass*> Keys;
 	Keys.Add(UPrFirebaseRemoteConfigModule::StaticClass());
 	Keys.Add(UPrFirebaseCrashlyticsModule::StaticClass());
+	Keys.Add(UPrFirebaseAnalyticsModule::StaticClass());
 	Keys.Add(UPrFirebasePerformanceModule::StaticClass());
 
 	for (auto& Pair : Modules)

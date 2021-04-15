@@ -6,6 +6,7 @@
 
 		<setBoolFromProperty result="bFirebaseEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseEnable" default="false"/>
 		<setBoolFromProperty result="bFirebaseCrashlyticsEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseCrashlyticsEnable" default="false"/>
+		<setBoolFromProperty result="bFirebaseAnalyticsEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseAnalyticsEnable" default="false"/>
 		<setBoolFromProperty result="bFirebaseRemoteConfigEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebaseRemoteConfigEnable" default="false"/>
 		<setBoolFromProperty result="bFirebasePerformanceEnable" ini="Engine" section="/Script/PrFirebase.PrFirebaseSettings" property="bFirebasePerformanceEnable" default="false"/>
 	</init>
@@ -38,6 +39,13 @@
 							-keep public class * extends java.lang.Exception
 							-keep class com.crashlytics.** { *; }
 							-dontwarn com.crashlytics.**
+						</insert>
+					</true>
+				</if>
+				<if condition="bFirebaseAnalyticsEnable">
+					<true>
+						<insert>
+							-keep public class com.pr.firebase.analytics.** { *; }
 						</insert>
 					</true>
 				</if>
@@ -89,8 +97,16 @@
 						implementation 'com.google.android.gms:play-services-games:21.0.0'
 
 						implementation platform('com.google.firebase:firebase-bom:26.4.0')
-						implementation 'com.google.firebase:firebase-analytics'
+						
 				</insert>
+
+				<if condition="bFirebaseAnalyticsEnable">
+					<true>
+						<insert>
+							implementation 'com.google.firebase:firebase-analytics'
+						</insert>
+					</true>
+				</if>
 
 				<if condition="bFirebaseCrashlyticsEnable">
 					<true>
@@ -179,6 +195,16 @@
 				<insert>
 					<![CDATA[
 						import com.pr.firebase.*;
+						
+					]]>
+				</insert>
+			</true>
+		</if>
+		<if condition="bFirebaseAnalyticsEnable">
+			<true>
+				<insert>
+					<![CDATA[
+						import com.pr.firebase.analytics.*;
 					]]>
 				</insert>
 			</true>
@@ -194,7 +220,7 @@
 						{
 							
 						}
-            
+
             // Firebase Crashlytics
 
 						public void AndroidThunkJava_FirebaseCrashlytics_SetUserIdentifier(String UserIdentifier)
@@ -222,38 +248,39 @@
 						{
 							PrFirebase.crashlyticsProxy().addAttribute(Key, Value);
 						}
+
+			// FirebasePerformance
             
-            // FirebasePerformance
-            
-            public void AndroidThunkJava_FirebasePerformance_StartTrace(int index, String identifier)
+						public void AndroidThunkJava_FirebasePerformance_StartTrace(int index, String identifier)
 						{
 							PrFirebase.performanceProxy().startTrace(index, identifier);
 						}
             
-            public void AndroidThunkJava_FirebasePerformance_StopTrace(int index)
+						public void AndroidThunkJava_FirebasePerformance_StopTrace(int index)
 						{
 							PrFirebase.performanceProxy().stopTrace(index);
 						}
             
-            public void AndroidThunkJava_FirebasePerformance_IncrementMetric(int index, String name, int value)
+						public void AndroidThunkJava_FirebasePerformance_IncrementMetric(int index, String name, int value)
 						{
 							PrFirebase.performanceProxy().incrementMetric(index, name, value);
 						}
             
-            public void AndroidThunkJava_FirebasePerformance_SetMetric(int index, String name, int value)
+						public void AndroidThunkJava_FirebasePerformance_SetMetric(int index, String name, int value)
 						{
 							PrFirebase.performanceProxy().setMetric(index, name, value);
 						}
             
-            public void AndroidThunkJava_FirebasePerformance_SetAttribute(int index, String name, String value)
+						public void AndroidThunkJava_FirebasePerformance_SetAttribute(int index, String name, String value)
 						{
 							PrFirebase.performanceProxy().setAttribute(index, name, value);
 						}
             
-            public void AndroidThunkJava_FirebasePerformance_RemoveAttribute(int index, String name)
+						public void AndroidThunkJava_FirebasePerformance_RemoveAttribute(int index, String name)
 						{
 							PrFirebase.performanceProxy().removeAttribute(index, name);
 						}
+						
 					]]>
 				</insert>
 			</true>
@@ -266,6 +293,15 @@
 				<insert>
 					<![CDATA[
 						PrFirebase.initialize(this);
+					]]>
+				</insert>
+			</true>
+		</if>
+		<if condition="bFirebaseAnalyticsEnable">
+			<true>
+				<insert>
+					<![CDATA[
+						PrFirebaseAnalytics.Init(this);
 					]]>
 				</insert>
 			</true>

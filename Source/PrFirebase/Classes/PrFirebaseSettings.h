@@ -39,6 +39,10 @@ public:
 	/* Path to google-services.json */
 	UPROPERTY(Config, EditAnywhere, Category = "Firebase")
 	FString FirebaseAndroidConfig;
+	
+	/* Enable crashlytics module */
+	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Analytics")
+	bool bFirebaseAnalyticsEnable;
 
 	/* Enable crashlytics module */
 	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Crashlytics")

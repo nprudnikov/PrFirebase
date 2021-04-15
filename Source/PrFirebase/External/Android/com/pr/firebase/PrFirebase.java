@@ -5,6 +5,7 @@ package com.pr.firebase;
 import com.pr.firebase.*;
 import com.pr.firebase.crashlytics.*;
 import com.pr.firebase.performance.*;
+import com.pr.firebase.analytics.*;
 import android.app.NativeActivity;
 
 public class PrFirebase {

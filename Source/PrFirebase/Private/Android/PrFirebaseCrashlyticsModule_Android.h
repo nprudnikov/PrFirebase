@@ -25,6 +25,7 @@ public:
 	virtual void AddAttribute(const FString& Key, const FString& Value) override;
 
 protected:
+	
 	virtual void Initialize_AnyThread() override;
 
 #endif // WITH_FIREBASE_CRASHLYTICS && PLATFORM_ANDROID

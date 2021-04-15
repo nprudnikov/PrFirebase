@@ -8,6 +8,7 @@ UPrFirebaseSettings::UPrFirebaseSettings(const FObjectInitializer& ObjectInitial
 	, bFirebaseLoggingInShipping(false)
 	, FirebaseIOSConfig(TEXT("Config/Firebase/GoogleService-Info.plist"))
 	, FirebaseAndroidConfig(TEXT("Config/Firebase/google-services.json"))
+	, bFirebaseAnalyticsEnable(false)
 	, bFirebaseCrashlyticsEnable(false)
 	, bFirebaseCrashlytics_SendNotes(true)
 	, FirebaseCrashlytics_LogLevel(EPrFirebaseLogLevel::Warning)
