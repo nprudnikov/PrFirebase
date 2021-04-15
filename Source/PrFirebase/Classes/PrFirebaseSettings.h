@@ -60,6 +60,10 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Crashlytics")
 	TArray<FName> FirebaseCrashlytics_ForcedLogCategories;
 
+	/* You can change this parameter from Firebase Remote Config (use key "pr-ignored-log-categories" e.g.: pr-ignored-log-categories: LogSlate, LogGame, etc.) */
+	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Crashlytics")
+	TArray<FName> FirebaseCrashlytics_IgnoredLogCategories;
+
 	/* Enable remote config module */
 	UPROPERTY(Config, EditAnywhere, Category = "Firebase|RemoteConfig")
 	bool bFirebaseRemoteConfigEnable;

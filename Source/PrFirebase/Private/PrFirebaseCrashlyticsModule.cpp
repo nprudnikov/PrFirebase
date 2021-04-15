@@ -219,9 +219,11 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 		static EPrFirebaseLogLevel DefaultLogLevel = GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_LogLevel;
 		static EPrFirebaseLogLevel ErrorLogLevel = GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_ErrorLogLevel;
 		static TSet<FName> ForcedLogCategories = TSet<FName>(GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_ForcedLogCategories);
+		static TSet<FName> IgnoredLogCategories = TSet<FName>(GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_IgnoredLogCategories);
 
 #if WITH_FIREBASE_REMOTECONFIG
 		static const FString ForcedLogCategoriesParameterName = TEXT("pr-forced-log-categories");
+		static const FString IgnoredLogCategoriesParameterName = TEXT("pr-ignored-log-categories");
 		static const FString LogLevelParameterName = TEXT("pr-log-level");
 		static const FString ErrorLogLevelParameterName = TEXT("pr-error-log-level");
 		static bool bRemoteConfigReady = false;
@@ -230,6 +232,7 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 		UPrFirebaseRemoteConfigModule* RemoteConfigModule = UPrFirebaseLibrary::GetFirebaseProxy()->GetRemoteConfigModule();
 		if (!bRemoteConfigReady && RemoteConfigModule->IsFetched() || RemoteConfigModule->GetFetchCounter() != FetchCounter)
 		{
+			// Forced log categories
 			if (RemoteConfigModule->HasValue(ForcedLogCategoriesParameterName))
 			{
 				FString LogCategoriesRaw = TEXT("");
@@ -251,6 +254,30 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 			else
 			{
 				ForcedLogCategories = TSet<FName>(GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_ForcedLogCategories);
+			}
+
+			// Ignored log categories
+			if (RemoteConfigModule->HasValue(IgnoredLogCategoriesParameterName))
+			{
+				FString LogCategoriesRaw = TEXT("");
+				RemoteConfigModule->GetStringValue(IgnoredLogCategoriesParameterName, LogCategoriesRaw);
+
+				TArray<FString> LogCategoriesRawArray;
+				LogCategoriesRaw.ParseIntoArray(LogCategoriesRawArray, TEXT(","), true);
+
+				IgnoredLogCategories.Empty();
+				for (FString& LogCategoryRaw : LogCategoriesRawArray)
+				{
+					LogCategoryRaw.TrimStartAndEndInline();
+					if (LogCategoryRaw.Len() > 0)
+					{
+						IgnoredLogCategories.Add(FName(*LogCategoryRaw));
+					}
+				}
+			}
+			else
+			{
+				IgnoredLogCategories = TSet<FName>(GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_IgnoredLogCategories);
 			}
 
 			if (RemoteConfigModule->HasValue(LogLevelParameterName))
@@ -316,6 +343,10 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 				{
 					WriteLog(CrashlyticsLogFormat(V, Verbosity, Category));
 				}
+			}
+			else if (IgnoredLogCategories.Contains(Category))
+			{
+				// Do nothing
 			}
 			else if (ErrorLogLevelValue >= VerbosityValue)
 			{
