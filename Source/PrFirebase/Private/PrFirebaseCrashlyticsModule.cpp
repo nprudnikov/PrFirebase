@@ -1,4 +1,4 @@
-// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+// Copyright 2020-2021 Nikolay Prudnikov. All Rights Reserved.
 
 #include "PrFirebaseCrashlyticsModule.h"
 
@@ -137,8 +137,8 @@ void UPrFirebaseCrashlyticsModule::CatchEngineLogs()
 	GError = &ErrorOutput;
 
 	const auto PlatformOutputDevices = FPlatformOutputDevices::GetLog();
-	check(PlatformOutputDevices)
-		check(GLog->IsRedirectingTo(PlatformOutputDevices));
+	check(PlatformOutputDevices);
+	check(GLog->IsRedirectingTo(PlatformOutputDevices));
 	GLog->RemoveOutputDevice(PlatformOutputDevices);
 
 	static FCrashlyticsOutputDevice DefaultOutput(PlatformOutputDevices, this);

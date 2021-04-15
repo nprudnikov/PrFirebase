@@ -1,15 +1,18 @@
-// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+// Copyright 2020-2021 Nikolay Prudnikov. All Rights Reserved.
 
 package com.pr.firebase;
 
 import com.pr.firebase.*;
 import com.pr.firebase.crashlytics.*;
+import com.pr.firebase.performance.*;
+import com.pr.firebase.analytics.*;
 import android.app.NativeActivity;
 
 public class PrFirebase {
 	
 	private static boolean isInit = false;
 	private static PrFirebaseCrashlytics crashlytics = null;
+	private static PrFirebasePerformance performance = null;
 
 	static public void initialize(NativeActivity activity)
 	{
@@ -17,12 +20,18 @@ public class PrFirebase {
 		{
 			isInit = true;
 			crashlytics = new PrFirebaseCrashlytics(activity);
+			performance = new PrFirebasePerformance(activity);
 		}
 	}
 
 	static public PrFirebaseCrashlytics crashlyticsProxy()
 	{
 		return crashlytics;
+	}
+
+	static public PrFirebasePerformance performanceProxy()
+	{
+		return performance;
 	}
 
 }

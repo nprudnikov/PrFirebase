@@ -42,6 +42,13 @@
 						</insert>
 					</true>
 				</if>
+				<if condition="bFirebaseAnalyticsEnable">
+					<true>
+						<insert>
+							-keep public class com.pr.firebase.analytics.** { *; }
+						</insert>
+					</true>
+				</if>
 			</true>
 		</if>
 	</proguardAdditions>
@@ -52,7 +59,6 @@
 				<insert>
 					repositories {
 						google()
-
 						jcenter()
 					}
 
@@ -91,8 +97,16 @@
 						implementation 'com.google.android.gms:play-services-games:21.0.0'
 
 						implementation platform('com.google.firebase:firebase-bom:26.4.0')
-						implementation 'com.google.firebase:firebase-analytics'
+						
 				</insert>
+
+				<if condition="bFirebaseAnalyticsEnable">
+					<true>
+						<insert>
+							implementation 'com.google.firebase:firebase-analytics'
+						</insert>
+					</true>
+				</if>
 
 				<if condition="bFirebaseCrashlyticsEnable">
 					<true>
@@ -181,11 +195,16 @@
 				<insert>
 					<![CDATA[
 						import com.pr.firebase.*;
-						import android.os.Bundle;
 						
-						import com.google.firebase.analytics.FirebaseAnalytics;
-						
-						import android.util.Log;
+					]]>
+				</insert>
+			</true>
+		</if>
+		<if condition="bFirebaseAnalyticsEnable">
+			<true>
+				<insert>
+					<![CDATA[
+						import com.pr.firebase.analytics.*;
 					]]>
 				</insert>
 			</true>
@@ -201,11 +220,8 @@
 						{
 							
 						}
-						
-						public void AndroidThunkJava_Firebase_InitializeAnalytics()
-						{
-							
-						}
+
+            // Firebase Crashlytics
 
 						public void AndroidThunkJava_FirebaseCrashlytics_SetUserIdentifier(String UserIdentifier)
 						{
@@ -232,30 +248,39 @@
 						{
 							PrFirebase.crashlyticsProxy().addAttribute(Key, Value);
 						}
-						
-					]]>
-				</insert>
-			</true>
-		</if>
-		<if condition="bFirebaseAnalyticsEnable">
-			<true>
-				<insert>
-					<![CDATA[
-						private FirebaseAnalytics mFirebaseAnalytics;
-						
-						public void AndroidThunkJava_FirebaseAnalytics_TrackEvent(String Name, HashMap<String, String> StringParams, HashMap<String, Float> FloatParams)
-						{			
-							Bundle analyticsparams = new Bundle();
-							
-							for(String key : StringParams.keySet()) {
-								analyticsparams.putString(key, StringParams.get(key));
-							}
-							for(String key : FloatParams.keySet()) {
-								analyticsparams.putFloat(key, FloatParams.get(key));
-							}
-							
-							mFirebaseAnalytics.logEvent(Name, analyticsparams);	
+
+			// FirebasePerformance
+            
+						public void AndroidThunkJava_FirebasePerformance_StartTrace(int index, String identifier)
+						{
+							PrFirebase.performanceProxy().startTrace(index, identifier);
 						}
+            
+						public void AndroidThunkJava_FirebasePerformance_StopTrace(int index)
+						{
+							PrFirebase.performanceProxy().stopTrace(index);
+						}
+            
+						public void AndroidThunkJava_FirebasePerformance_IncrementMetric(int index, String name, int value)
+						{
+							PrFirebase.performanceProxy().incrementMetric(index, name, value);
+						}
+            
+						public void AndroidThunkJava_FirebasePerformance_SetMetric(int index, String name, int value)
+						{
+							PrFirebase.performanceProxy().setMetric(index, name, value);
+						}
+            
+						public void AndroidThunkJava_FirebasePerformance_SetAttribute(int index, String name, String value)
+						{
+							PrFirebase.performanceProxy().setAttribute(index, name, value);
+						}
+            
+						public void AndroidThunkJava_FirebasePerformance_RemoveAttribute(int index, String name)
+						{
+							PrFirebase.performanceProxy().removeAttribute(index, name);
+						}
+						
 					]]>
 				</insert>
 			</true>
@@ -276,7 +301,7 @@
 			<true>
 				<insert>
 					<![CDATA[
-						mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+						PrFirebaseAnalytics.Init(this);
 					]]>
 				</insert>
 			</true>

@@ -15,6 +15,24 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
 	virtual void LogEvent(FString EventName, TMap<FString, FString> StringParams, TMap<FString, float> FloatParams) { Firebase_NotImplemented(); }
+	
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+    virtual void LogScreenView(FString ScreenName, FString ScreenClass) { Firebase_NotImplemented(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+    virtual void LogSpendVirtualCurrency(FString ItemName, FString CurrencyName, float Value) { Firebase_NotImplemented(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+    virtual void LogLevelUp(FString Character, int Level) { Firebase_NotImplemented(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+    virtual void LogLevelStart(FString LevelName) { Firebase_NotImplemented(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+    virtual void LogLevelEnd(FString LevelName, FString Success) { Firebase_NotImplemented(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+    virtual void SetDefaultEventParameters(TMap<FString, FString> StringParams, TMap<FString, float> FloatParams) { Firebase_NotImplemented(); }
 
 	virtual bool IsAvailable() const final override { return WITH_FIREBASE_ANALYTICS; }
 

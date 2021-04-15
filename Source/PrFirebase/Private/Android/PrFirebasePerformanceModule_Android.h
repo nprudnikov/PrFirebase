@@ -4,21 +4,15 @@
 
 #include "PrFirebasePerformanceModule.h"
 
-#include "PrFirebasePerformanceModule_iOS.generated.h"
-
-#if WITH_FIREBASE_PERFORMANCE && PLATFORM_IOS
-@class FIRTrace;
-#endif // WITH_FIREBASE_PERFORMANCE && PLATFORM_IOS
+#include "PrFirebasePerformanceModule_Android.generated.h"
 
 UCLASS()
-class UPrFirebasePerformanceModule_iOS : public UPrFirebasePerformanceModule
+class UPrFirebasePerformanceModule_Android : public UPrFirebasePerformanceModule
 {
 	GENERATED_BODY()
 
-#if WITH_FIREBASE_PERFORMANCE && PLATFORM_IOS
+#if WITH_FIREBASE_PERFORMANCE && PLATFORM_ANDROID
 protected:
-	TMap<int32, FIRTrace*> Traces;
-
 	virtual void InternalStartTrace(int32 TraceIndex, const FString& Identifier) override;
 
 	virtual void InternalStopTrace(int32 TraceIndex) override;
@@ -33,5 +27,5 @@ protected:
 
 	virtual void PostInitialize_AnyThread() override;
 
-#endif // WITH_FIREBASE_PERFORMANCE && PLATFORM_IOS
+#endif // WITH_FIREBASE_PERFORMANCE && PLATFORM_ANDROID
 };

@@ -15,9 +15,6 @@ Primary supported modules:
 * Performance
 * Remote Config
 
-Additional features:
-* Auth 
-
 Planned:
 * Functions
 

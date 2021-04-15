@@ -1,4 +1,4 @@
-// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+// Copyright 2020-2021 Nikolay Prudnikov. All Rights Reserved.
 
 using System.IO;
 using Tools.DotNETCommon;
@@ -39,8 +39,10 @@ namespace UnrealBuildTool.Rules
                 new string[] {
                     "Core",
                     "CoreUObject",
-                    "Engine"
-                });
+                    "Engine",
+					"RenderCore",
+					"RHI"
+				});
 
             PrivateIncludePathModuleNames.AddRange(
                 new string[] {

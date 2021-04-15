@@ -1,4 +1,4 @@
-// Copyright 2020 Nikolay Prudnikov. All Rights Reserved.
+// Copyright 2020-2021 Nikolay Prudnikov. All Rights Reserved.
 
 #include "iOS/PrFirebasePerformanceModule_iOS.h"
 
@@ -54,38 +54,6 @@ void UPrFirebasePerformanceModule_iOS::PostInitialize_AnyThread()
 	//TODO: disabe firebase auto stats
 
 	InternalLaunch_AnyThread();
-
-#if !PLATFORM_TVOS
-	if (@available(iOS 11, *))
-	{
-		FCoreDelegates::ETemperatureSeverity Temp = FCoreDelegates::ETemperatureSeverity::Good;
-		switch ([[NSProcessInfo processInfo] thermalState])
-		{
-		case NSProcessInfoThermalStateNominal:
-			Temp = FCoreDelegates::ETemperatureSeverity::Good;
-			break;
-		case NSProcessInfoThermalStateFair:
-			Temp = FCoreDelegates::ETemperatureSeverity::Bad;
-			break;
-		case NSProcessInfoThermalStateSerious:
-			Temp = FCoreDelegates::ETemperatureSeverity::Serious;
-			break;
-		case NSProcessInfoThermalStateCritical:
-			Temp = FCoreDelegates::ETemperatureSeverity::Critical;
-			break;
-		}
-
-		bool bLowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
-
-		AsyncTask(ENamedThreads::GameThread, [WeakThis = MakeWeakObjectPtr(this), Temp, bLowPowerMode]() {
-			if (WeakThis.IsValid())
-			{
-				WeakThis->SetTemperature(Temp);
-				WeakThis->SetPowerMode(bLowPowerMode);
-			}
-		});
-	}
-#endif
 
 	AsyncTask(ENamedThreads::GameThread, [WeakThis = MakeWeakObjectPtr(this)]() {
 		if (WeakThis.IsValid())
