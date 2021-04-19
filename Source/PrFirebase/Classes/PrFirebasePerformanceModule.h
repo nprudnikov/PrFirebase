@@ -8,9 +8,83 @@
 
 #include "Misc/CoreDelegates.h"
 
+#include <atomic>
+
 #include "PrFirebasePerformanceModule.generated.h"
 
 class UPrFirebasePerformanceModule;
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebaseMemoryStats
+
+struct PRFIREBASE_API FPrFirebaseMemoryStats
+{
+	/** The amount of physical memory currently available, in bytes. */
+	uint64 AvailablePhysical;
+
+	/** The amount of virtual memory currently available, in bytes. */
+	uint64 AvailableVirtual;
+
+	/** The amount of physical memory used by the process, in bytes. */
+	uint64 UsedPhysical;
+
+	/** The peak amount of physical memory used by the process, in bytes. */
+	uint64 PeakUsedPhysical;
+
+	/** Total amount of virtual memory used by the process. */
+	uint64 UsedVirtual;
+
+	/** The peak amount of virtual memory used by the process. */
+	uint64 PeakUsedVirtual;
+
+	FPrFirebaseMemoryStats();
+};
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebaseMemoryAtomicStats
+
+struct FPrFirebaseMemoryAtomicStats
+{
+	/** The amount of physical memory currently available, in bytes. */
+	std::atomic<uint64> AvailablePhysical;
+
+	/** The amount of virtual memory currently available, in bytes. */
+	std::atomic<uint64> AvailableVirtual;
+
+	/** The amount of physical memory used by the process, in bytes. */
+	std::atomic<uint64> UsedPhysical;
+
+	/** The peak amount of physical memory used by the process, in bytes. */
+	std::atomic<uint64> PeakUsedPhysical;
+
+	/** Total amount of virtual memory used by the process. */
+	std::atomic<uint64> UsedVirtual;
+
+	/** The peak amount of virtual memory used by the process. */
+	std::atomic<uint64> PeakUsedVirtual;
+
+	FPrFirebaseMemoryAtomicStats();
+
+	FPrFirebaseMemoryStats Load();
+};
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebasePlatformMemory
+
+struct PRFIREBASE_API FPrFirebasePlatformMemory
+{
+private:
+	static FPrFirebaseMemoryAtomicStats AtomicStats;
+
+	static bool Initialize();
+
+	static void ForceUpdate();
+
+	FPrFirebasePlatformMemory(){};
+
+public:
+	static FPrFirebaseMemoryStats GetStats();
+};
 
 //////////////////////////////////////////////////////////////////////////
 // FPrFirebaseSyncAccum
@@ -208,6 +282,8 @@ private:
 
 	TOptional<FDateTime> SyncTime;
 
+	TOptional<FDateTime> MemSyncTime;
+
 	FPrFirebaseSyncAccum AvFrameAccum;
 
 	FPrFirebaseDeviceTimelines DeviceTimelines;
@@ -225,8 +301,6 @@ private:
 	void UpdateDeviceTimelines(const FDateTime& Now, bool bSync);
 
 	void UpdateTraceAttributes(FPrFirebasePerformanceTrace& Trace) const;
-
-	int32 GetTemperature() const;
 };
 
 #define PRF_SCOPE_TIME(_Identifier_) \

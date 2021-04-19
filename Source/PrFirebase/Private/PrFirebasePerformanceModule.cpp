@@ -3,9 +3,11 @@
 #include "PrFirebasePerformanceModule.h"
 
 #include "PrFirebaseDefines.h"
+#include "PrFirebaseLibrary.h"
 #include "PrFirebaseSettings.h"
 
 #include "Async/Async.h"
+#include "Containers/Ticker.h"
 #include "DeviceProfiles/DeviceProfile.h"
 #include "DeviceProfiles/DeviceProfileManager.h"
 #include "GenericPlatform/GenericPlatformMisc.h"
@@ -15,6 +17,85 @@
 #include "RenderCore.h"
 
 #define MIN_SYNC_TIME 0.5f
+#define MIN_MEM_SYNC_TIME 2.0f
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebaseMemoryStats
+
+FPrFirebaseMemoryStats::FPrFirebaseMemoryStats()
+	: AvailablePhysical(0)
+	, AvailableVirtual(0)
+	, UsedPhysical(0)
+	, PeakUsedPhysical(0)
+	, UsedVirtual(0)
+	, PeakUsedVirtual(0)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebaseMemoryAtomicStats
+
+FPrFirebaseMemoryAtomicStats::FPrFirebaseMemoryAtomicStats()
+	: AvailablePhysical(0)
+	, AvailableVirtual(0)
+	, UsedPhysical(0)
+	, PeakUsedPhysical(0)
+	, UsedVirtual(0)
+	, PeakUsedVirtual(0)
+{
+}
+
+FPrFirebaseMemoryStats FPrFirebaseMemoryAtomicStats::Load()
+{
+	FPrFirebaseMemoryStats RetVal;
+
+	RetVal.AvailablePhysical = AvailablePhysical.load(std::memory_order_relaxed);
+	RetVal.AvailableVirtual = AvailableVirtual.load(std::memory_order_relaxed);
+	RetVal.UsedPhysical = UsedPhysical.load(std::memory_order_relaxed);
+	RetVal.PeakUsedPhysical = PeakUsedPhysical.load(std::memory_order_relaxed);
+	RetVal.UsedVirtual = UsedVirtual.load(std::memory_order_relaxed);
+	RetVal.PeakUsedVirtual = PeakUsedVirtual.load(std::memory_order_relaxed);
+
+	return RetVal;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// FPrFirebasePlatformMemory
+
+FPrFirebaseMemoryAtomicStats FPrFirebasePlatformMemory::AtomicStats;
+
+bool FPrFirebasePlatformMemory::Initialize()
+{
+	ForceUpdate();
+
+	auto Delegate = FTickerDelegate::CreateLambda([](float DeltaTime) -> bool {
+		AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, []() {
+			FPrFirebasePlatformMemory::ForceUpdate();
+		});
+		return true;
+	});
+
+	FTicker::GetCoreTicker().AddTicker(Delegate, 1.f);
+
+	return true;
+}
+
+void FPrFirebasePlatformMemory::ForceUpdate()
+{
+	const auto MemoryStats = FPlatformMemory::GetStats();
+	AtomicStats.AvailablePhysical.store(MemoryStats.AvailablePhysical);
+	AtomicStats.AvailableVirtual.store(MemoryStats.AvailableVirtual);
+	AtomicStats.UsedPhysical.store(MemoryStats.UsedPhysical);
+	AtomicStats.PeakUsedPhysical.store(MemoryStats.PeakUsedPhysical);
+	AtomicStats.UsedVirtual.store(MemoryStats.UsedVirtual);
+	AtomicStats.PeakUsedVirtual.store(MemoryStats.PeakUsedVirtual);
+}
+
+FPrFirebaseMemoryStats FPrFirebasePlatformMemory::GetStats()
+{
+	static const bool bInitialized = Initialize();
+	return AtomicStats.Load();
+}
 
 //////////////////////////////////////////////////////////////////////////
 // FPrFirebaseSyncAccum
@@ -418,8 +499,6 @@ void UPrFirebasePerformanceModule::OnAppliactionLaunched()
 
 void UPrFirebasePerformanceModule::OnEndFrame()
 {
-	static const IConsoleVariable* CVarMaxFPS = IConsoleManager::Get().FindConsoleVariable(TEXT("t.MaxFPS"));
-
 	if (!bAppliactionLaunched)
 	{
 		return;
@@ -446,11 +525,17 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 		{
 			if (AvFrameAccum.FrameCounter > 0)
 			{
-				const int32 MaxFPS = CVarMaxFPS->GetInt();
+				static const IConsoleVariable* CVarMaxFPS = IConsoleManager::Get().FindConsoleVariable(TEXT("t.MaxFPS"));
+				auto MaxFPS = CVarMaxFPS ? CVarMaxFPS->GetInt() : 60;
+				if (MaxFPS <= 0)
+				{
+					MaxFPS = 60;
+				}
+
 				auto FrameTrace = StartTrace(FString::Printf(TEXT("pr_frame_%d%s"), MaxFPS, *FramePostfix));
 				UpdateTraceAttributes(FrameTrace);
 
-				const float FloatMaxFPS = static_cast<float>(CVarMaxFPS->GetInt());
+				const float FloatMaxFPS = static_cast<float>(MaxFPS);
 				const float FloatFrameCounter = static_cast<float>(AvFrameAccum.FrameCounter);
 				const float FloatFPS = FloatFrameCounter / Delta;
 				FrameTrace.SetMetric(TEXT("fps"), FMath::RoundToInt(FloatFPS));
@@ -489,6 +574,38 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 	{
 		SyncTime = Now;
 		AvFrameAccum = {};
+	}
+
+	if (MemSyncTime.IsSet())
+	{
+		const float Delta = (Now - MemSyncTime.GetValue()).GetTotalSeconds();
+		const float MemSyncTimeInterval = FMath::Max(GetDefault<UPrFirebaseSettings>()->FirebasePerformance_MemSyncTime, MIN_MEM_SYNC_TIME);
+
+		if (Delta >= MemSyncTimeInterval)
+		{
+			auto MemTrace = StartTrace(TEXT("pr_memory"));
+			UpdateTraceAttributes(MemTrace);
+
+			const auto Stats = FPrFirebasePlatformMemory::GetStats();
+
+			MemTrace.SetMetric(TEXT("physical_mb"), FMath::RoundToInt(static_cast<float>(Stats.UsedPhysical) / (1024.f * 1024.f)));
+
+			if (Stats.AvailablePhysical > 0)
+			{
+				MemTrace.SetMetric(TEXT("physical_rel"), FMath::RoundToInt((static_cast<float>(Stats.UsedPhysical) / static_cast<float>(Stats.AvailablePhysical)) * 100.f));
+			}
+
+			MemTrace.SetMetric(TEXT("textures_mb"), FMath::RoundToInt(static_cast<float>(GCurrentTextureMemorySize) / 1024.f));
+			MemTrace.SetMetric(TEXT("render_targets_mb"), FMath::RoundToInt(static_cast<float>(GCurrentRendertargetMemorySize) / 1024.f));
+
+			MemTrace.Stop();
+
+			MemSyncTime.Reset();
+		}
+	}
+	else
+	{
+		MemSyncTime = Now;
 	}
 }
 

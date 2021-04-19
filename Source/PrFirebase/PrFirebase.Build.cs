@@ -67,13 +67,6 @@ namespace UnrealBuildTool.Rules
 					/* Firebase / Firebase Analytics */
 					PublicAdditionalFrameworks.Add(
 						new Framework(
-							"FIRAnalyticsConnector",
-							"../../ThirdParty/iOS/FIRAnalyticsConnector.embeddedframework.zip"
-						)
-					);
-					
-					PublicAdditionalFrameworks.Add(
-						new Framework(
 							"FirebaseAnalytics",
 							"../../ThirdParty/iOS/FirebaseAnalytics.embeddedframework.zip"
 						)
@@ -194,21 +187,7 @@ namespace UnrealBuildTool.Rules
 								"../../ThirdParty/iOS/FirebaseRemoteConfig.embeddedframework.zip"
 							)
 						);
-						
-						PublicAdditionalFrameworks.Add(
-							new Framework(
-								"GoogleToolboxForMac",
-								"../../ThirdParty/iOS/GoogleToolboxForMac.embeddedframework.zip"
-							)
-						);
-						
-						PublicAdditionalFrameworks.Add(
-							new Framework(
-								"GTMSessionFetcher",
-								"../../ThirdParty/iOS/GTMSessionFetcher.embeddedframework.zip"
-							)
-						);
-						
+
 						PublicAdditionalFrameworks.Add(
 							new Framework(
 								"Protobuf",

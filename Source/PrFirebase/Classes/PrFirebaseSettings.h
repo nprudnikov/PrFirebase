@@ -80,7 +80,11 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Performance")
 	bool bFirebasePerformanceEnable;
 
-	/* Time between calculations of the average frame size  */
+	/* Time between sending frame information (sec) */
 	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Performance")
 	float FirebasePerformance_SyncTime;
+
+	/* Time between sending memory information (sec) */
+	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Performance")
+	float FirebasePerformance_MemSyncTime;
 };
