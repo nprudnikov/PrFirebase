@@ -75,7 +75,7 @@ bool FPrFirebasePlatformMemory::Initialize()
 		return true;
 	});
 
-	FTicker::GetCoreTicker().AddTicker(Delegate, 1.f);
+	FTicker::GetCoreTicker().AddTicker(Delegate, 5.f);
 
 	return true;
 }

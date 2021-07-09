@@ -144,6 +144,8 @@ void UPrFirebaseCrashlyticsModule::CatchEngineLogs()
 	static FCrashlyticsOutputDevice DefaultOutput(PlatformOutputDevices, this);
 	GLog->AddOutputDevice(&DefaultOutput);
 
+	AddAttribute(TEXT("Start Time"), FDateTime::UtcNow().ToString());
+
 	const bool bSendNotes = GetDefault<UPrFirebaseSettings>()->bFirebaseCrashlytics_SendNotes;
 	if (bSendNotes)
 	{
@@ -212,7 +214,7 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 	if (bCritical)
 	{
 		WriteBlueprintCallstack();
-		WriteError(CrashlyticsLogFormat(V, Verbosity, Category));
+		WriteError(FString::Printf(TEXT("Critical: %s"), *CrashlyticsLogFormat(V, Verbosity, Category)));
 	}
 	else
 	{

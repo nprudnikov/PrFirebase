@@ -33,11 +33,17 @@
 				<if condition="bFirebaseCrashlyticsEnable">
 					<true>
 						<insert>
+							<![CDATA[
 							-keepattributes *Annotation*
 							-keepattributes SourceFile,LineNumberTable
 							-keep public class * extends java.lang.Exception
-							-keep class com.crashlytics.** { *; }
-							-dontwarn com.crashlytics.**
+							-keep class com.google.firebase.** { *; }
+							-dontwarn com.google.firebase.**
+
+							-keepclassmembers class com.google.firebase.perf.metrics.Trace  {
+								private final java.util.Map attributes;
+							}
+							]]>
 						</insert>
 					</true>
 				</if>

@@ -3,6 +3,8 @@
 package com.pr.firebase.performance;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.lang.reflect.Field;
 import android.app.NativeActivity;
 import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.Trace;
@@ -55,10 +57,32 @@ public class PrFirebasePerformance {
 		trace.putMetric(name, value);
 	}
 
+	private static Field attributesField = null;
+
 	public void setAttribute(int index, String name, String value)
 	{
 		Trace trace = getTrace(index);
-		trace.putAttribute(name, value);
+
+		// Slow regex check inside
+		//trace.putAttribute(name, value);
+
+		// Fast hack
+		try
+		{
+			if (attributesField == null)
+			{
+				//attributesField = trace.getClass().getDeclaredField("customAttributesMap");
+				attributesField = trace.getClass().getDeclaredField("attributes");
+				attributesField.setAccessible(true);
+			}
+			
+			Map<String, String> customAttributesMap = (Map<String, String>) attributesField.get(trace);
+			customAttributesMap.put(name, value);
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void removeAttribute(int index, String name)
