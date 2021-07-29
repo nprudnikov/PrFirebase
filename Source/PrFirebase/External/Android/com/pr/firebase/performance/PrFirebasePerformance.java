@@ -71,8 +71,7 @@ public class PrFirebasePerformance {
 		{
 			if (attributesField == null)
 			{
-				//attributesField = trace.getClass().getDeclaredField("customAttributesMap");
-				attributesField = trace.getClass().getDeclaredField("attributes");
+				attributesField = trace.getClass().getDeclaredField("customAttributesMap");
 				attributesField.setAccessible(true);
 			}
 			

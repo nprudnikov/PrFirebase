@@ -229,10 +229,9 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 		static const FString LogLevelParameterName = TEXT("pr-log-level");
 		static const FString ErrorLogLevelParameterName = TEXT("pr-error-log-level");
 		static bool bRemoteConfigReady = false;
-		static int32 FetchCounter = 0;
 
 		UPrFirebaseRemoteConfigModule* RemoteConfigModule = UPrFirebaseLibrary::GetFirebaseProxy()->GetRemoteConfigModule();
-		if (!bRemoteConfigReady && RemoteConfigModule->IsFetched() || RemoteConfigModule->GetFetchCounter() != FetchCounter)
+		if (!bRemoteConfigReady && RemoteConfigModule->IsFetched())
 		{
 			// Forced log categories
 			if (RemoteConfigModule->HasValue(ForcedLogCategoriesParameterName))
@@ -243,7 +242,6 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 				TArray<FString> LogCategoriesRawArray;
 				LogCategoriesRaw.ParseIntoArray(LogCategoriesRawArray, TEXT(","), true);
 
-				ForcedLogCategories.Empty();
 				for (FString& LogCategoryRaw : LogCategoriesRawArray)
 				{
 					LogCategoryRaw.TrimStartAndEndInline();
@@ -252,10 +250,6 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 						ForcedLogCategories.Add(FName(*LogCategoryRaw));
 					}
 				}
-			}
-			else
-			{
-				ForcedLogCategories = TSet<FName>(GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_ForcedLogCategories);
 			}
 
 			// Ignored log categories
@@ -267,7 +261,6 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 				TArray<FString> LogCategoriesRawArray;
 				LogCategoriesRaw.ParseIntoArray(LogCategoriesRawArray, TEXT(","), true);
 
-				IgnoredLogCategories.Empty();
 				for (FString& LogCategoryRaw : LogCategoriesRawArray)
 				{
 					LogCategoryRaw.TrimStartAndEndInline();
@@ -276,10 +269,6 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 						IgnoredLogCategories.Add(FName(*LogCategoryRaw));
 					}
 				}
-			}
-			else
-			{
-				IgnoredLogCategories = TSet<FName>(GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_IgnoredLogCategories);
 			}
 
 			if (RemoteConfigModule->HasValue(LogLevelParameterName))
@@ -297,10 +286,6 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 					}
 				}
 			}
-			else
-			{
-				DefaultLogLevel = GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_LogLevel;
-			}
 
 			if (RemoteConfigModule->HasValue(ErrorLogLevelParameterName))
 			{
@@ -316,10 +301,6 @@ void UPrFirebaseCrashlyticsModule::Log(bool bCritical, const TCHAR* V, ELogVerbo
 						ErrorLogLevel = static_cast<EPrFirebaseLogLevel>(EnumValue);
 					}
 				}
-			}
-			else
-			{
-				ErrorLogLevel = GetDefault<UPrFirebaseSettings>()->FirebaseCrashlytics_ErrorLogLevel;
 			}
 
 			bRemoteConfigReady = true;

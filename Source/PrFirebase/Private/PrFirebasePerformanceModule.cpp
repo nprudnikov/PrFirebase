@@ -431,6 +431,22 @@ void UPrFirebasePerformanceModule::InternalLaunch_AnyThread()
 	if (!AppLaunchTrace.IsSet())
 	{
 		AppLaunchTrace = StartTrace(TEXT("pr_app_launch"));
+
+		IConsoleVariable* MaterialQualityLevelVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.MaterialQualityLevel"));
+		const auto MaterialQualityLevel = MaterialQualityLevelVar->GetInt();
+		int32 Quality = MaterialQualityLevel;
+
+		if (MaterialQualityLevel == 1)
+		{
+			Quality = 2;
+		}
+		else if (MaterialQualityLevel == 2)
+		{
+			Quality = 1;
+		}
+
+		AppLaunchTrace->SetMetric(TEXT("quality"), Quality);
+		UpdateTraceAttributes(*AppLaunchTrace);
 	}
 }
 
