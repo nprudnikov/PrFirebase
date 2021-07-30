@@ -9,6 +9,7 @@
 #include "iOS/PrFirebaseCrashlyticsModule_iOS.h"
 #include "iOS/PrFirebasePerformanceModule_iOS.h"
 #include "iOS/PrFirebaseRemoteConfigModule_iOS.h"
+#include "iOS/PrFirebaseAppDistributionModule_iOS.h"
 
 #import <Firebase.h>
 
@@ -18,6 +19,7 @@ void UPrFirebase_iOS::InitializeModuleList()
 	ModuleClasses.Add(UPrFirebaseCrashlyticsModule::StaticClass(), UPrFirebaseCrashlyticsModule_iOS::StaticClass());
 	ModuleClasses.Add(UPrFirebasePerformanceModule::StaticClass(), UPrFirebasePerformanceModule_iOS::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAuthModule::StaticClass(), UPrFirebaseAuthModule_iOS::StaticClass());
+	ModuleClasses.Add(UPrFirebaseAppDistributionModule_iOS::StaticClass(), UPrFirebaseAppDistributionModule_iOS::StaticClass());
 }
 
 void UPrFirebase_iOS::Initialize()

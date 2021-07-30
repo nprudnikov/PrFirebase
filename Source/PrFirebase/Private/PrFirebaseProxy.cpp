@@ -2,7 +2,12 @@
 
 #include "PrFirebaseProxy.h"
 
+#include "PrFirebaseAppDistributionModule.h"
+#include "PrFirebaseAuthModule.h"
+#include "PrFirebaseCrashlyticsModule.h"
 #include "PrFirebaseDefines.h"
+#include "PrFirebasePerformanceModule.h"
+#include "PrFirebaseRemoteConfigModule.h"
 #include "PrFirebaseSettings.h"
 
 UPrFirebaseProxy::UPrFirebaseProxy(const FObjectInitializer& ObjectInitializer)
@@ -35,6 +40,12 @@ UPrFirebaseAuthModule* UPrFirebaseProxy::GetAuthModule() const
 	return CastChecked<UPrFirebaseAuthModule>(Modules.FindChecked(UPrFirebaseAuthModule::StaticClass()));
 }
 
+UPrFirebaseAppDistributionModule* UPrFirebaseProxy::GetAppDistributionModule() const
+{
+	check(bInitialized);
+	return CastChecked<UPrFirebaseAppDistributionModule>(Modules.FindChecked(UPrFirebaseAppDistributionModule::StaticClass()));
+}
+
 void UPrFirebaseProxy::InitializeFirebase()
 {
 	if (!bInitialized)
@@ -63,6 +74,7 @@ void UPrFirebaseProxy::InitializeModuleList()
 	ModuleClasses.Add(UPrFirebaseCrashlyticsModule::StaticClass(), UPrFirebaseCrashlyticsModule::StaticClass());
 	ModuleClasses.Add(UPrFirebasePerformanceModule::StaticClass(), UPrFirebasePerformanceModule::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAuthModule::StaticClass(), UPrFirebaseAuthModule::StaticClass());
+	ModuleClasses.Add(UPrFirebaseAppDistributionModule::StaticClass(), UPrFirebaseAppDistributionModule::StaticClass());
 }
 
 void UPrFirebaseProxy::Initialize()

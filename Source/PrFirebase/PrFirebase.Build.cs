@@ -21,12 +21,14 @@ namespace UnrealBuildTool.Rules
             bool bFirebaseRemoteConfigEnable = false;
             bool bFirebaseAuthEnable = false;
             bool bFirebasePerformanceEnable = false;
+            bool bFirebaseAppDistributionEnable = false;
             
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseEnable", out bFirebaseEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseCrashlyticsEnable", out bFirebaseCrashlyticsEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseRemoteConfigEnable", out bFirebaseRemoteConfigEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseAuthEnable", out bFirebaseAuthEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebasePerformanceEnable", out bFirebasePerformanceEnable);
+            EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseAppDistributionEnable", out bFirebaseAppDistributionEnable);
 
             PrivateIncludePaths.AddRange(
                 new string[] {
@@ -214,6 +216,16 @@ namespace UnrealBuildTool.Rules
 						);
                     }
                     
+                    if(bFirebaseAppDistributionEnable)
+                    {
+                        PublicAdditionalFrameworks.Add(
+                            new Framework(
+                                "FirebaseAppDistribution",
+                                "../../ThirdParty/iOS/FirebaseAppDistribution.embeddedframework.zip"
+                            )
+                        );
+                    }
+                    
                     PublicSystemLibraries.Add("sqlite3");
                     
                     PrivateIncludePaths.Add("PrFirebase/External/iOS");
@@ -244,6 +256,7 @@ namespace UnrealBuildTool.Rules
 			PublicDefinitions.Add("WITH_FIREBASE_AUTH=" + (bFirebaseEnable && bFirebaseAuthEnable ? "1" : "0"));
 			PublicDefinitions.Add("WITH_FIREBASE_PERFORMANCE=" + (bFirebaseEnable && bFirebasePerformanceEnable ? "1" : "0"));
             PublicDefinitions.Add("WITH_FIREBASE_SYMBOLS_WARNING=" + (bFirebaseEnable && bSymbolsWarning ? "1" : "0"));
+            PublicDefinitions.Add("WITH_FIREBASE_APPDISTRIBUTION=" + (bFirebaseEnable && bFirebaseAppDistributionEnable ? "1" : "0"));
 
             PublicDefinitions.Add("FIREBASE_LOGGING=" + (bFirebaseLoggingInShipping ? "1" : "0"));
         }

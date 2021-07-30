@@ -87,4 +87,8 @@ public:
 	/* Time between sending memory information (sec) */
 	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Performance")
 	float FirebasePerformance_MemSyncTime;
+	
+	/* Enable distribution module */
+	UPROPERTY(Config, EditAnywhere, Category = "Firebase|Distribution")
+	bool bFirebaseAppDistributionEnable;
 };

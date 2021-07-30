@@ -18,6 +18,7 @@ UPrFirebaseSettings::UPrFirebaseSettings(const FObjectInitializer& ObjectInitial
 	, bFirebasePerformanceEnable(false)
 	, FirebasePerformance_SyncTime(2.f)
 	, FirebasePerformance_MemSyncTime(10.f)
+	, bFirebaseAppDistributionEnable(false)
 {
 	FirebaseCrashlytics_ForcedLogCategories.Add("LogCrashlytics");
 	FirebaseCrashlytics_ForcedLogCategories.Add("LogPerformance");
