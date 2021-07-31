@@ -14,6 +14,8 @@ class PRFIREBASE_API UPrFirebaseAppDistributionModule : public UPrFirebaseModule
 	GENERATED_BODY()
 
 public:
+	virtual bool IsAvailable() const final override { return WITH_FIREBASE_APPDISTRIBUTION; }
+
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Distribution")
 	virtual void CheckForUpdate() { Firebase_NotImplemented(); }
 };

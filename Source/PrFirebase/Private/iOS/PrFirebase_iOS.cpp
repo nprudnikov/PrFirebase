@@ -19,7 +19,7 @@ void UPrFirebase_iOS::InitializeModuleList()
 	ModuleClasses.Add(UPrFirebaseCrashlyticsModule::StaticClass(), UPrFirebaseCrashlyticsModule_iOS::StaticClass());
 	ModuleClasses.Add(UPrFirebasePerformanceModule::StaticClass(), UPrFirebasePerformanceModule_iOS::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAuthModule::StaticClass(), UPrFirebaseAuthModule_iOS::StaticClass());
-	ModuleClasses.Add(UPrFirebaseAppDistributionModule_iOS::StaticClass(), UPrFirebaseAppDistributionModule_iOS::StaticClass());
+	ModuleClasses.Add(UPrFirebaseAppDistributionModule::StaticClass(), UPrFirebaseAppDistributionModule_iOS::StaticClass());
 }
 
 void UPrFirebase_iOS::Initialize()

@@ -11,56 +11,58 @@
 
 void UPrFirebaseAppDistributionModule_iOS::CheckForUpdate()
 {
-	// Sign in a tester without automatically checking for update
-	if(![[FIRAppDistribution appDistribution] isTesterSignedIn]) {
-		[[FIRAppDistribution appDistribution]
-			signInTesterWithCompletion:^(NSError *_Nullable error) {
-				if (error) {
-					NSLog(@"Firebase: SignIn failed");
-					return;
-				}
-		}];
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		// Sign in a tester without automatically checking for update
+		if(![[FIRAppDistribution appDistribution] isTesterSignedIn]) {
+			[[FIRAppDistribution appDistribution]
+				signInTesterWithCompletion:^(NSError *_Nullable error) {
+					if (error) {
+						NSLog(@"Firebase SignIn failed: %@", error.localizedDescription);
+						return;
+					}
+			}];
+		}
 
-	// Only check for update if tester is already signed in - do not prompt
-	if([[FIRAppDistribution appDistribution] isTesterSignedIn]) {
-		[[FIRAppDistribution appDistribution]
-			checkForUpdateWithCompletion:^(FIRAppDistributionRelease *_Nullable release,
-										   NSError *_Nullable error) {
-				if (error) {
-					UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Check For Update"
-												message:[NSString stringWithFormat:@"Error during tester sign in! %@", error.localizedDescription]
-												preferredStyle:UIAlertControllerStyleAlert];
+		// Only check for update if tester is already signed in - do not prompt
+		if([[FIRAppDistribution appDistribution] isTesterSignedIn]) {
+			[[FIRAppDistribution appDistribution]
+				checkForUpdateWithCompletion:^(FIRAppDistributionRelease *_Nullable release,
+											   NSError *_Nullable error) {
+					if (error) {
+						UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Check For Update"
+													message:[NSString stringWithFormat:@"Error during tester sign in! %@", error.localizedDescription]
+													preferredStyle:UIAlertControllerStyleAlert];
 
-					UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault
-												handler:^(UIAlertAction *action) {}];
+						UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault
+													handler:^(UIAlertAction *action) {}];
 
-					[alert addAction:okAction];
-					[[IOSAppDelegate GetDelegate].IOSController presentViewController:alert animated:YES completion:nil];
+						[alert addAction:okAction];
+						[[IOSAppDelegate GetDelegate].IOSController presentViewController:alert animated:YES completion:nil];
 
-					return;
-				}
+						return;
+					}
 
-				if (release) {
-					UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Version Available"
-												message:[NSString stringWithFormat:@"Version %@ (%@) is available.", release.displayVersion,
-												release.buildVersion] preferredStyle:UIAlertControllerStyleAlert];
+					if (release) {
+						UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"New Version Available"
+													message:[NSString stringWithFormat:@"Version %@ (%@) is available.", release.displayVersion,
+													release.buildVersion] preferredStyle:UIAlertControllerStyleAlert];
 
-					UIAlertAction *updateAction = [UIAlertAction actionWithTitle:@"Update"
-													style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-						[[UIApplication sharedApplication] openURL:release.downloadURL options:@{} completionHandler:nil];
-					}];
+						UIAlertAction *updateAction = [UIAlertAction actionWithTitle:@"Update"
+														style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+							[[UIApplication sharedApplication] openURL:release.downloadURL options:@{} completionHandler:nil];
+						}];
 
-					UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
-													style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {}];
+						UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+														style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {}];
 
-					[alert addAction:updateAction];
-					[alert addAction:cancelAction];
+						[alert addAction:updateAction];
+						[alert addAction:cancelAction];
 
-					[[IOSAppDelegate GetDelegate].IOSController presentViewController:alert animated:YES completion:nil];
-				}
-		}];
-	}
+						[[IOSAppDelegate GetDelegate].IOSController presentViewController:alert animated:YES completion:nil];
+					}
+			}];
+		}
+	});
 }
 
 #endif // WITH_FIREBASE_CRASHLYTICS && PLATFORM_IOS
