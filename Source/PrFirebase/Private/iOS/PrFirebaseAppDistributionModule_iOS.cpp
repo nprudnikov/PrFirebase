@@ -11,6 +11,7 @@
 
 void UPrFirebaseAppDistributionModule_iOS::CheckForUpdate()
 {
+	// clang-format off
 	dispatch_async(dispatch_get_main_queue(), ^{
 		// Sign in a tester without automatically checking for update
 		if(![[FIRAppDistribution appDistribution] isTesterSignedIn]) {
@@ -63,6 +64,7 @@ void UPrFirebaseAppDistributionModule_iOS::CheckForUpdate()
 			}];
 		}
 	});
+	// clang-format on
 }
 
 #endif // WITH_FIREBASE_CRASHLYTICS && PLATFORM_IOS

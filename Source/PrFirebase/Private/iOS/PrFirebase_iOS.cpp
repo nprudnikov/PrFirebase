@@ -5,11 +5,11 @@
 #include "PrFirebaseDefines.h"
 
 #if WITH_FIREBASE && PLATFORM_IOS
+#include "iOS/PrFirebaseAppDistributionModule_iOS.h"
 #include "iOS/PrFirebaseAuthModule_iOS.h"
 #include "iOS/PrFirebaseCrashlyticsModule_iOS.h"
 #include "iOS/PrFirebasePerformanceModule_iOS.h"
 #include "iOS/PrFirebaseRemoteConfigModule_iOS.h"
-#include "iOS/PrFirebaseAppDistributionModule_iOS.h"
 
 #import <Firebase.h>
 
