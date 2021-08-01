@@ -8,6 +8,7 @@
 #include "Android/PrFirebaseCrashlyticsModule_Android.h"
 #include "Android/PrFirebasePerformanceModule_Android.h"
 #include "Android/PrFirebaseRemoteConfigModule_Android.h"
+#include "PrFirebaseAppDistributionModule.h"
 #include "PrFirebaseAuthModule.h"
 #include "PrFirebasePerformanceModule.h"
 #include "PrFirebaseRemoteConfigModule.h"
@@ -22,6 +23,7 @@ void UPrFirebase_Android::InitializeModuleList()
 	ModuleClasses.Add(UPrFirebaseCrashlyticsModule::StaticClass(), UPrFirebaseCrashlyticsModule_Android::StaticClass());
 	ModuleClasses.Add(UPrFirebasePerformanceModule::StaticClass(), UPrFirebasePerformanceModule_Android::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAuthModule::StaticClass(), UPrFirebaseAuthModule::StaticClass());
+	ModuleClasses.Add(UPrFirebaseAppDistributionModule::StaticClass(), UPrFirebaseAppDistributionModule::StaticClass());
 }
 
 void UPrFirebase_Android::Initialize()
