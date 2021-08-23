@@ -30,7 +30,7 @@ class FPrFirebase : public IPrFirebase
 		if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 		{
 			SettingsModule->RegisterSettings("Project", "Plugins", "PrFirebase",
-				LOCTEXT("FirebaseSettingsName", "Firebase"),
+				LOCTEXT("FirebaseSettingsName", "PrFirebase"),
 				LOCTEXT("FirebaseSettingsDescription", "Settings for firebase"),
 				Settings);
 		}
