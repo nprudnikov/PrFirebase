@@ -21,5 +21,5 @@ public:
 	}
 
 public:
-	UPrFirebaseProxy* FirebaseProxy;
+	UPrFirebaseProxy* FirebaseProxy = nullptr;
 };
