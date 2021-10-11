@@ -2,6 +2,7 @@
 
 #include "PrFirebasePerformanceModule.h"
 
+#include "PrFirebaseCrashlyticsModule.h"
 #include "PrFirebaseDefines.h"
 #include "PrFirebaseLibrary.h"
 #include "PrFirebaseSettings.h"
@@ -541,14 +542,26 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 		{
 			if (AvFrameAccum.FrameCounter > 0)
 			{
-				static const IConsoleVariable* CVarMaxFPS = IConsoleManager::Get().FindConsoleVariable(TEXT("t.MaxFPS"));
-				auto MaxFPS = CVarMaxFPS ? CVarMaxFPS->GetInt() : 60;
-				if (MaxFPS <= 0)
+#if PLATFORM_ANDROID
+				static const auto PlatformMaxFPS = FAndroidMisc::GetNativeDisplayRefreshRate();
+#elif PLATFORM_IOS
+				static const auto PlatformMaxFPS = FGenericPlatformMisc::GetMaxRefreshRate();
+#else
+				static const auto PlatformMaxFPS = 60;
+#endif
+
+				auto MaxFPS = PlatformMaxFPS;
+				static const auto CVarSyncInterval = IConsoleManager::Get().FindConsoleVariable(TEXT("rhi.SyncInterval"));
+				if (CVarSyncInterval)
 				{
-					MaxFPS = 60;
+					const auto SyncInterval = CVarSyncInterval->GetInt();
+					if (SyncInterval > 0)
+					{
+						MaxFPS = 60 / SyncInterval;
+					}
 				}
 
-				auto FrameTrace = StartTrace(FString::Printf(TEXT("pr_frame_%d%s"), MaxFPS, *FramePostfix));
+				auto FrameTrace = StartTrace(FString::Printf(TEXT("pr_frame%s"), *FramePostfix));
 				UpdateTraceAttributes(FrameTrace);
 
 				const float FloatMaxFPS = static_cast<float>(MaxFPS);
