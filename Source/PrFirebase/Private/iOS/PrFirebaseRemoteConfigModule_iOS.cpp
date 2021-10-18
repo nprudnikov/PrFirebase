@@ -127,7 +127,7 @@ void UPrFirebaseRemoteConfigModule_iOS::PostInitialize_AnyThread()
 
 void UPrFirebaseRemoteConfigModule_iOS::InternalFetch()
 {
-	//TODO: call GetDefault not safe
+	// TODO: call GetDefault not safe
 	static const int32 ExpirationDuration = GetDefault<UPrFirebaseSettings>()->FirebaseRemoteConfig_ExpirationDurationForFetch;
 
 	NSLog(@"Firebase: RemoteConfig fetching...");

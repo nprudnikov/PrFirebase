@@ -547,18 +547,14 @@ void UPrFirebasePerformanceModule::OnEndFrame()
 #elif PLATFORM_IOS
 				static const auto PlatformMaxFPS = FGenericPlatformMisc::GetMaxRefreshRate();
 #else
-				static const auto PlatformMaxFPS = 60;
+				static const auto PlatformMaxFPS = FGenericPlatformMisc::GetMaxRefreshRate();
 #endif
 
 				auto MaxFPS = PlatformMaxFPS;
-				static const auto CVarSyncInterval = IConsoleManager::Get().FindConsoleVariable(TEXT("rhi.SyncInterval"));
-				if (CVarSyncInterval)
+				static const auto MaxFPSCVar = IConsoleManager::Get().FindConsoleVariable(TEXT("t.MaxFPS"));
+				if (MaxFPSCVar)
 				{
-					const auto SyncInterval = CVarSyncInterval->GetInt();
-					if (SyncInterval > 0)
-					{
-						MaxFPS = 60 / SyncInterval;
-					}
+					MaxFPS = MaxFPSCVar->GetInt();
 				}
 
 				auto FrameTrace = StartTrace(FString::Printf(TEXT("pr_frame%s"), *FramePostfix));

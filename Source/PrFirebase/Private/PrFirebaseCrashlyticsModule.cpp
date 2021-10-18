@@ -41,7 +41,7 @@ public:
 
 #if (!UE_BUILD_SHIPPING || FIREBASE_LOGGING)
 		Original->Serialize(V, Verbosity, Category);
-#endif //!UE_BUILD_SHIPPING
+#endif // !UE_BUILD_SHIPPING
 	}
 
 	virtual void Serialize(const TCHAR* V, ELogVerbosity::Type Verbosity, const class FName& Category, const double Time) override
@@ -53,7 +53,7 @@ public:
 
 #if (!UE_BUILD_SHIPPING || FIREBASE_LOGGING)
 		Original->Serialize(V, Verbosity, Category, Time);
-#endif //!UE_BUILD_SHIPPING
+#endif // !UE_BUILD_SHIPPING
 	}
 };
 

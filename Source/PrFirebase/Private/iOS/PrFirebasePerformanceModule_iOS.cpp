@@ -51,7 +51,7 @@ void UPrFirebasePerformanceModule_iOS::InternalRemoveAttribute(int32 TraceIndex,
 
 void UPrFirebasePerformanceModule_iOS::PostInitialize_AnyThread()
 {
-	//TODO: disabe firebase auto stats
+	// TODO: disabe firebase auto stats
 
 	InternalLaunch_AnyThread();
 

@@ -80,7 +80,7 @@ void UPrFirebasePerformanceModule_Android::InternalRemoveAttribute(int32 TraceIn
 
 void UPrFirebasePerformanceModule_Android::PostInitialize_AnyThread()
 {
-	//TODO: disabe firebase auto stats
+	// TODO: disabe firebase auto stats
 
 	InternalLaunch_AnyThread();
 	AsyncTask(ENamedThreads::GameThread, [WeakThis = MakeWeakObjectPtr(this)]() {
