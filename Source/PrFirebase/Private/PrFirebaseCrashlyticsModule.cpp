@@ -5,6 +5,7 @@
 #include "PrFirebaseSettings.h"
 
 #include "HAL/PlatformOutputDevices.h"
+#include "Logging/LogVerbosity.h"
 #include "Misc/CoreMisc.h"
 #include "Misc/OutputDevice.h"
 #include "Misc/OutputDeviceError.h"
@@ -175,7 +176,7 @@ FString UPrFirebaseCrashlyticsModule::CrashlyticsLogFormat(const TCHAR* V, ELogV
 	}
 	else if (Verbosity > ELogVerbosity::Type::NoLogging)
 	{
-		return FString::Printf(TEXT("%s: %s: %s"), *Category.ToString(), FOutputDeviceHelper::VerbosityToString(Verbosity), V);
+		return FString::Printf(TEXT("%s: %s: %s"), *Category.ToString(), ToString(Verbosity), V);
 	}
 	else
 	{
