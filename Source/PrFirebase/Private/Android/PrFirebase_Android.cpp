@@ -5,6 +5,7 @@
 #include "PrFirebaseDefines.h"
 
 #if WITH_FIREBASE && PLATFORM_ANDROID
+#include "Android/PrFirebaseAnalyticsModule_Android.h"
 #include "Android/PrFirebaseCrashlyticsModule_Android.h"
 #include "Android/PrFirebasePerformanceModule_Android.h"
 #include "Android/PrFirebaseRemoteConfigModule_Android.h"
@@ -24,6 +25,7 @@ void UPrFirebase_Android::InitializeModuleList()
 	ModuleClasses.Add(UPrFirebasePerformanceModule::StaticClass(), UPrFirebasePerformanceModule_Android::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAuthModule::StaticClass(), UPrFirebaseAuthModule::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAppDistributionModule::StaticClass(), UPrFirebaseAppDistributionModule::StaticClass());
+	ModuleClasses.Add(UPrFirebaseAnalyticsModule::StaticClass(), UPrFirebaseAnalyticsModule_Android::StaticClass());
 }
 
 void UPrFirebase_Android::Initialize()

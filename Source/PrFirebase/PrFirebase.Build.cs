@@ -216,7 +216,7 @@ namespace UnrealBuildTool.Rules
 						);
                     }
                     
-                    if(bFirebaseAppDistributionEnable)
+                    if (bFirebaseAppDistributionEnable)
                     {
                         PublicAdditionalFrameworks.Add(
                             new Framework(
