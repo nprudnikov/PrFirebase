@@ -2,6 +2,7 @@
 
 #include "PrFirebaseProxy.h"
 
+#include "PrFirebaseAnalyticsModule.h"
 #include "PrFirebaseAppDistributionModule.h"
 #include "PrFirebaseAuthModule.h"
 #include "PrFirebaseCrashlyticsModule.h"
@@ -46,6 +47,12 @@ UPrFirebaseAppDistributionModule* UPrFirebaseProxy::GetAppDistributionModule() c
 	return CastChecked<UPrFirebaseAppDistributionModule>(Modules.FindChecked(UPrFirebaseAppDistributionModule::StaticClass()));
 }
 
+UPrFirebaseAnalyticsModule* UPrFirebaseProxy::GetAnalyticsModule() const
+{
+	check(bInitialized);
+	return CastChecked<UPrFirebaseAnalyticsModule>(Modules.FindChecked(UPrFirebaseAnalyticsModule::StaticClass()));
+}
+
 void UPrFirebaseProxy::InitializeFirebase()
 {
 	if (!bInitialized)
@@ -75,6 +82,7 @@ void UPrFirebaseProxy::InitializeModuleList()
 	ModuleClasses.Add(UPrFirebasePerformanceModule::StaticClass(), UPrFirebasePerformanceModule::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAuthModule::StaticClass(), UPrFirebaseAuthModule::StaticClass());
 	ModuleClasses.Add(UPrFirebaseAppDistributionModule::StaticClass(), UPrFirebaseAppDistributionModule::StaticClass());
+	ModuleClasses.Add(UPrFirebaseAnalyticsModule::StaticClass(), UPrFirebaseAnalyticsModule::StaticClass());
 }
 
 void UPrFirebaseProxy::Initialize()

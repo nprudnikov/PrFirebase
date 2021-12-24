@@ -47,6 +47,12 @@
 						</insert>
 					</true>
 				</if>
+
+				<insert>
+					<![CDATA[
+					-keep class com.google.firebase.analytics.** { *; }
+					]]>
+				</insert>
 			</true>
 		</if>
 	</proguardAdditions>
@@ -259,6 +265,13 @@
             public void AndroidThunkJava_FirebasePerformance_RemoveAttribute(int index, String name)
 						{
 							PrFirebase.performanceProxy().removeAttribute(index, name);
+						}
+
+			// Firebase Analytics
+
+			public void AndroidThunkJava_FirebaseAnalytics_LogImpression(Bundle ImpressionData)
+						{
+							PrFirebase.analyticsProxy().logImpression(ImpressionData);
 						}
 					]]>
 				</insert>

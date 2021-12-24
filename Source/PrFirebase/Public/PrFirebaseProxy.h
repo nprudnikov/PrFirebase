@@ -10,6 +10,7 @@ class UPrFirebaseRemoteConfigModule;
 class UPrFirebasePerformanceModule;
 class UPrFirebaseAuthModule;
 class UPrFirebaseAppDistributionModule;
+class UPrFirebaseAnalyticsModule;
 
 UCLASS()
 class PRFIREBASE_API UPrFirebaseProxy : public UObject
@@ -31,6 +32,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Distribution")
 	UPrFirebaseAppDistributionModule* GetAppDistributionModule() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+	UPrFirebaseAnalyticsModule* GetAnalyticsModule() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Firebase")
 	void InitializeFirebase();
