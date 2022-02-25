@@ -1,4 +1,4 @@
-// Copyright 2021 Anton Rassadin. All Rights Reserved.
+// Copyright 2021-2022 Anton Rassadin. All Rights Reserved.
 
 #pragma once
 
@@ -15,6 +15,10 @@ class UPrFirebaseAnalyticsModule_iOS : public UPrFirebaseAnalyticsModule
 
 public:
 	virtual void LogImpression(FPrFirebaseImpressionData ImpressionData) override;
+
+	virtual void RequestAppInstanceId() override;
+
+	virtual FString GetAppInstanceId() override;
 
 #endif
 };

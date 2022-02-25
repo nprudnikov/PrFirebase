@@ -1,4 +1,4 @@
-// Copyright 2021 Anton Rassadin. All Rights Reserved.
+// Copyright 2021-2022 Anton Rassadin. All Rights Reserved.
 
 #include "iOS/PrFirebaseAnalyticsModule_iOS.h"
 
@@ -23,6 +23,16 @@ void UPrFirebaseAnalyticsModule_iOS::LogImpression(FPrFirebaseImpressionData Imp
 		}];
 	});
 	// clang-format on
+}
+
+void UPrFirebaseAnalyticsModule_iOS::RequestAppInstanceId()
+{
+	// no op
+}
+
+FString UPrFirebaseAnalyticsModule_iOS::GetAppInstanceId()
+{
+	return FString([FIRAnalytics appInstanceID]);
 }
 
 #endif // WITH_FIREBASE && PLATFORM_IOS
