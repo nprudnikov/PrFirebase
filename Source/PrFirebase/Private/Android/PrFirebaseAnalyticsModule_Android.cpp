@@ -4,6 +4,7 @@
 
 #if WITH_FIREBASE && PLATFORM_ANDROID
 #include "PrFirebaseDefines.h"
+#include "PrFirebaseLibrary.h"
 #include "PrFirebaseSettings.h"
 
 #include "Async/Async.h"
@@ -102,6 +103,19 @@ FString UPrFirebaseAnalyticsModule_Android::GetAppInstanceId()
 	{
 		return FString{};
 	}
+}
+
+extern "C" {
+JNIEXPORT void Java_com_pr_firebase_analytics_PrFirebaseAnalytics_OnAppInstanceIdReady(JNIEnv* env, jobject obj)
+{
+	AsyncTask(ENamedThreads::GameThread, []() {
+		const auto AnalyticsModule = UPrFirebaseLibrary::GetFirebaseProxy()->GetAnalyticsModule();
+		if (AnalyticsModule != nullptr)
+		{
+			AnalyticsModule->AppInstanceIdReadyDelegate.Broadcast();
+		}
+	});
+}
 }
 
 #endif // WITH_FIREBASE && PLATFORM_ANDROID

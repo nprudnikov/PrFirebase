@@ -1,4 +1,4 @@
-// Copyright 2021 Anton Rassadin. All Rights Reserved.
+// Copyright 2021-2022 Anton Rassadin. All Rights Reserved.
 
 package com.pr.firebase.analytics;
 
@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 public class PrFirebaseAnalytics {
+	private static native void OnAppInstanceIdReady();
 
 	private FirebaseAnalytics mFirebaseAnalytics;
 	private String mAppInstanceId;
@@ -34,6 +35,7 @@ public class PrFirebaseAnalytics {
 					if (task.isSuccessful())
 					{
 						mAppInstanceId = task.getResult();
+						OnAppInstanceIdReady();
 					}
 				}
 			});

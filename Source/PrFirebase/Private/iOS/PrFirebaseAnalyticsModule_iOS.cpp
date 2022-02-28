@@ -27,7 +27,7 @@ void UPrFirebaseAnalyticsModule_iOS::LogImpression(FPrFirebaseImpressionData Imp
 
 void UPrFirebaseAnalyticsModule_iOS::RequestAppInstanceId()
 {
-	// no op
+	AppInstanceIdReadyDelegate.Broadcast();
 }
 
 FString UPrFirebaseAnalyticsModule_iOS::GetAppInstanceId()

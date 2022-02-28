@@ -63,6 +63,8 @@ struct PRFIREBASE_API FPrFirebaseImpressionData
 	}
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPrAppInstanceIdReadyDelegate);
+
 UCLASS()
 class PRFIREBASE_API UPrFirebaseAnalyticsModule : public UPrFirebaseModule
 {
@@ -83,4 +85,7 @@ public:
 		Firebase_NotImplemented();
 		return FString{};
 	}
+
+	UPROPERTY(BlueprintAssignable)
+	FPrAppInstanceIdReadyDelegate AppInstanceIdReadyDelegate;
 };
