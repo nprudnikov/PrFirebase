@@ -1,4 +1,4 @@
-// Copyright 2021 Anton Rassadin. All Rights Reserved.
+// Copyright 2021-2022 Anton Rassadin. All Rights Reserved.
 
 #pragma once
 
@@ -63,6 +63,8 @@ struct PRFIREBASE_API FPrFirebaseImpressionData
 	}
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPrAppInstanceIdReadyDelegate);
+
 UCLASS()
 class PRFIREBASE_API UPrFirebaseAnalyticsModule : public UPrFirebaseModule
 {
@@ -73,4 +75,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
 	virtual void LogImpression(FPrFirebaseImpressionData ImpressionData) { Firebase_NotImplemented(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+	virtual void RequestAppInstanceId() { Firebase_NotImplemented(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+	virtual FString GetAppInstanceId()
+	{
+		Firebase_NotImplemented();
+		return FString{};
+	}
+
+	UPROPERTY(BlueprintAssignable)
+	FPrAppInstanceIdReadyDelegate AppInstanceIdReadyDelegate;
 };

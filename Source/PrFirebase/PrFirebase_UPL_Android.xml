@@ -273,6 +273,16 @@
 						{
 							PrFirebase.analyticsProxy().logImpression(ImpressionData);
 						}
+
+			public void AndroidThunkJava_FirebaseAnalytics_RequestAppInstanceId()
+						{
+							PrFirebase.analyticsProxy().RequestAppInstanceId();
+						}
+
+			public String AndroidThunkJava_FirebaseAnalytics_GetAppInstanceId()
+						{
+							return PrFirebase.analyticsProxy().GetAppInstanceId();
+						}
 					]]>
 				</insert>
 			</true>

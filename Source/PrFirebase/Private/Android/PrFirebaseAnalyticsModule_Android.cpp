@@ -1,9 +1,10 @@
-// Copyright 2021 Anton Rassadin. All Rights Reserved.
+// Copyright 2021-2022 Anton Rassadin. All Rights Reserved.
 
 #include "Android/PrFirebaseAnalyticsModule_Android.h"
 
 #if WITH_FIREBASE && PLATFORM_ANDROID
 #include "PrFirebaseDefines.h"
+#include "PrFirebaseLibrary.h"
 #include "PrFirebaseSettings.h"
 
 #include "Async/Async.h"
@@ -79,6 +80,42 @@ void UPrFirebaseAnalyticsModule_Android::LogImpression(FPrFirebaseImpressionData
 		Env->DeleteLocalRef(BundleClass);
 		Env->DeleteGlobalRef(BundleObject);
 	}
+}
+
+void UPrFirebaseAnalyticsModule_Android::RequestAppInstanceId()
+{
+	if (auto Env = FAndroidApplication::GetJavaEnv())
+	{
+		static auto Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_FirebaseAnalytics_RequestAppInstanceId", "()V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method);
+	}
+}
+
+FString UPrFirebaseAnalyticsModule_Android::GetAppInstanceId()
+{
+	if (auto Env = FAndroidApplication::GetJavaEnv())
+	{
+		static auto Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_FirebaseAnalytics_GetAppInstanceId", "()Ljava/lang/String;", false);
+		jstring jAppInstanceId = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis, Method);
+		return FJavaHelper::FStringFromLocalRef(Env, jAppInstanceId);
+	}
+	else
+	{
+		return FString{};
+	}
+}
+
+extern "C" {
+JNIEXPORT void Java_com_pr_firebase_analytics_PrFirebaseAnalytics_OnAppInstanceIdReady(JNIEnv* env, jobject obj)
+{
+	AsyncTask(ENamedThreads::GameThread, []() {
+		const auto AnalyticsModule = UPrFirebaseLibrary::GetFirebaseProxy()->GetAnalyticsModule();
+		if (AnalyticsModule != nullptr)
+		{
+			AnalyticsModule->AppInstanceIdReadyDelegate.Broadcast();
+		}
+	});
+}
 }
 
 #endif // WITH_FIREBASE && PLATFORM_ANDROID
