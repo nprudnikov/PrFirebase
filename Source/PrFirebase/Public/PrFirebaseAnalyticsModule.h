@@ -86,6 +86,9 @@ public:
 		return FString{};
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Firebase|Analytics")
+	virtual void LogRevenue(float RevenueUSD) { Firebase_NotImplemented(); }
+
 	UPROPERTY(BlueprintAssignable)
 	FPrAppInstanceIdReadyDelegate AppInstanceIdReadyDelegate;
 };

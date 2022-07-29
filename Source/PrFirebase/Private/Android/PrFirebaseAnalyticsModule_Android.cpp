@@ -105,6 +105,15 @@ FString UPrFirebaseAnalyticsModule_Android::GetAppInstanceId()
 	}
 }
 
+void UPrFirebaseAnalyticsModule_Android::LogRevenue(float RevenueUSD)
+{
+	if (auto Env = FAndroidApplication::GetJavaEnv())
+	{
+		static auto Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_FirebaseAnalytics_LogRevenue", "(F)V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, RevenueUSD);
+	}
+}
+
 extern "C" {
 JNIEXPORT void Java_com_pr_firebase_analytics_PrFirebaseAnalytics_OnAppInstanceIdReady(JNIEnv* env, jobject obj)
 {

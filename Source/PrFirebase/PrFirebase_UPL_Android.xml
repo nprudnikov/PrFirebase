@@ -283,6 +283,11 @@
 						{
 							return PrFirebase.analyticsProxy().GetAppInstanceId();
 						}
+
+			public void AndroidThunkJava_FirebaseAnalytics_LogRevenue(float RevenueUSD)
+						{
+							PrFirebase.analyticsProxy().LogRevenue(RevenueUSD);
+						}
 					]]>
 				</insert>
 			</true>
