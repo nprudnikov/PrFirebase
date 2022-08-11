@@ -40,6 +40,7 @@ void UPrFirebaseAnalyticsModule_iOS::LogRevenue(float RevenueUSD)
 	// clang-format off
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[FIRAnalytics logEventWithName:@"total_revenue" parameters:@{
+			kFIRParameterCurrency:@"USD",
 			kFIRParameterValue:[NSNumber numberWithFloat:RevenueUSD]
 		}];
 	});

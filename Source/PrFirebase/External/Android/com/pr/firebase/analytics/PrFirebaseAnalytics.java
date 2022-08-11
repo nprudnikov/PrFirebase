@@ -49,6 +49,7 @@ public class PrFirebaseAnalytics {
 	public void LogRevenue(float RevenueUSD)
 	{
 		Bundle bundle = new Bundle();
+		bundle.putString(FirebaseAnalytics.Param.CURRENCY, "USD");
 		bundle.putFloat(FirebaseAnalytics.Param.VALUE, RevenueUSD);
 		mFirebaseAnalytics.logEvent("total_revenue", bundle);
 	}
