@@ -20,5 +20,7 @@ public:
 
 	virtual FString GetAppInstanceId() override;
 
+	virtual void LogRevenue(float RevenueUSD) override;
+
 #endif // WITH_FIREBASE && PLATFORM_ANDROID
 };
