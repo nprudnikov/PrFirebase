@@ -268,12 +268,52 @@
 						}
 
 			// Firebase Analytics
-
-			public void AndroidThunkJava_FirebaseAnalytics_LogImpression(Bundle ImpressionData)
+			
+			public void AndroidThunkJava_FirebaseAnalytics_LogEvent(String Name, Bundle params)
 						{
-							PrFirebase.analyticsProxy().logImpression(ImpressionData);
+							PrFirebase.analyticsProxy().logEvent(Name, params);
+						}
+						
+			public void AndroidThunkJava_FirebaseAnalytics_LogScreenView(String ScreenName, String ScreenClass)
+						{
+							PrFirebase.analyticsProxy().logScreenView(ScreenName, ScreenClass);
+						}
+												
+			public void AndroidThunkJava_FirebaseAnalytics_LogSpendVirtualCurrency(String ItemName, String CurrencyName, float Value)
+						{
+							PrFirebase.analyticsProxy().logSpendVirtualCurrency(ItemName, CurrencyName, Value);
 						}
 
+			public void AndroidThunkJava_FirebaseAnalytics_LogLevelUp(String Character, long Level)
+						{
+							PrFirebase.analyticsProxy().logLevelUp(Character, Level);
+						}
+						
+			public void AndroidThunkJava_FirebaseAnalytics_LogLevelStart(String LevelName)
+						{
+							PrFirebase.analyticsProxy().logLevelStart(LevelName);
+						}	
+											
+			public void AndroidThunkJava_FirebaseAnalytics_LogLevelEnd(String LevelName, String Success)
+						{
+							PrFirebase.analyticsProxy().logLevelEnd(LevelName, Success);
+						}	
+																
+			public void AndroidThunkJava_FirebaseAnalytics_LogPurchase(Bundle purchaseData)
+						{
+							PrFirebase.analyticsProxy().logPurchase(purchaseData);
+						}	
+																					
+			public void AndroidThunkJava_FirebaseAnalytics_SetDefaultEventParameters(Bundle params)
+						{
+							PrFirebase.analyticsProxy().setDefaultEventParameters(params);
+						}
+						
+			public void AndroidThunkJava_FirebaseAnalytics_LogImpression(Bundle impressionData)
+						{
+							PrFirebase.analyticsProxy().logImpression(impressionData);
+						}
+						
 			public void AndroidThunkJava_FirebaseAnalytics_RequestAppInstanceId()
 						{
 							PrFirebase.analyticsProxy().RequestAppInstanceId();
@@ -283,10 +323,10 @@
 						{
 							return PrFirebase.analyticsProxy().GetAppInstanceId();
 						}
-
-			public void AndroidThunkJava_FirebaseAnalytics_LogRevenue(float RevenueUSD)
+						
+			public String AndroidThunkJava_FirebaseAnalytics_GetAppInstanceId()
 						{
-							PrFirebase.analyticsProxy().LogRevenue(RevenueUSD);
+							return PrFirebase.analyticsProxy().GetAppInstanceId();
 						}
 					]]>
 				</insert>
