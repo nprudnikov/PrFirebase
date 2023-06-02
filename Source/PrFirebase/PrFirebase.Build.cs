@@ -22,6 +22,7 @@ namespace UnrealBuildTool.Rules
             bool bFirebaseAuthEnable = false;
             bool bFirebasePerformanceEnable = false;
             bool bFirebaseAppDistributionEnable = false;
+            bool bFirebaseDontLinkPromisesObjC = false;
             
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseEnable", out bFirebaseEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseCrashlyticsEnable", out bFirebaseCrashlyticsEnable);
@@ -29,6 +30,7 @@ namespace UnrealBuildTool.Rules
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseAuthEnable", out bFirebaseAuthEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebasePerformanceEnable", out bFirebasePerformanceEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseAppDistributionEnable", out bFirebaseAppDistributionEnable);
+            EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseDontLinkPromisesObjC", out bFirebaseDontLinkPromisesObjC);
 
             PrivateIncludePaths.AddRange(
                 new string[] {
@@ -123,12 +125,15 @@ namespace UnrealBuildTool.Rules
 						)
 					);
 					
-					PublicAdditionalFrameworks.Add(
-						new Framework(
-							"PromisesObjC",
-							"../../ThirdParty/iOS/PromisesObjC.embeddedframework.zip"
-						)
-					);
+					if (bFirebaseDontLinkPromisesObjC == false)
+					{
+						PublicAdditionalFrameworks.Add(
+							new Framework(
+								"PromisesObjC",
+								"../../ThirdParty/iOS/PromisesObjC.embeddedframework.zip"
+							)
+						);
+					}
 					
 					/* Crashlytics */
 					if (bFirebaseCrashlyticsEnable)
