@@ -324,11 +324,6 @@
 						{
 							return PrFirebase.analyticsProxy().GetAppInstanceId();
 						}
-						
-			public String AndroidThunkJava_FirebaseAnalytics_GetAppInstanceId()
-						{
-							return PrFirebase.analyticsProxy().GetAppInstanceId();
-						}
 					]]>
 				</insert>
 			</true>
