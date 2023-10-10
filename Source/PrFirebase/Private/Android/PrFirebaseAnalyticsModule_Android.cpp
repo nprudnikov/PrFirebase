@@ -23,10 +23,10 @@ void UPrFirebaseAnalyticsModule_Android::LogEvent(FString EventName, TMap<FStrin
 		jmethodID BundleInit = Env->GetMethodID(BundleClass, "<init>", "()V");
 		jmethodID BundlePutString = Env->GetMethodID(BundleClass, "putString", "(Ljava/lang/String;Ljava/lang/String;)V");
 		jmethodID BundlePutDouble = Env->GetMethodID(BundleClass, "putDouble", "(Ljava/lang/String;D)V");
-		
+
 		jobject BundleObject = Env->NewGlobalRef(Env->NewObject(BundleClass, BundleInit));
 
-		for(const TPair<FString, FString>& ParamPair : StringParams)
+		for (const TPair<FString, FString>& ParamPair : StringParams)
 		{
 			jstring ParamKey = Env->NewStringUTF(TCHAR_TO_UTF8(*ParamPair.Key));
 			jstring ParamVal = Env->NewStringUTF(TCHAR_TO_UTF8(*ParamPair.Value));
@@ -37,7 +37,7 @@ void UPrFirebaseAnalyticsModule_Android::LogEvent(FString EventName, TMap<FStrin
 			Env->DeleteLocalRef(ParamVal);
 		}
 
-		for(const TPair<FString, float>& ParamPair : FloatParams)
+		for (const TPair<FString, float>& ParamPair : FloatParams)
 		{
 			jstring ParamKey = Env->NewStringUTF(TCHAR_TO_UTF8(*ParamPair.Key));
 
@@ -45,11 +45,11 @@ void UPrFirebaseAnalyticsModule_Android::LogEvent(FString EventName, TMap<FStrin
 
 			Env->DeleteLocalRef(ParamKey);
 		}
-		
+
 		jstring EventNameParam = Env->NewStringUTF(TCHAR_TO_UTF8(*EventName));
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, EventNameParam, BundleObject);
-		
+
 		Env->DeleteLocalRef(EventNameParam);
 		Env->DeleteLocalRef(BundleClass);
 		Env->DeleteGlobalRef(BundleObject);
@@ -64,9 +64,9 @@ void UPrFirebaseAnalyticsModule_Android::LogScreenView(FString ScreenName, FStri
 
 		jstring ScreenNameParam = Env->NewStringUTF(TCHAR_TO_UTF8(*ScreenName));
 		jstring ScreenClassParam = Env->NewStringUTF(TCHAR_TO_UTF8(*ScreenClass));
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, ScreenNameParam, ScreenClassParam);
-		
+
 		Env->DeleteLocalRef(ScreenNameParam);
 		Env->DeleteLocalRef(ScreenClassParam);
 	}
@@ -80,9 +80,9 @@ void UPrFirebaseAnalyticsModule_Android::LogSpendVirtualCurrency(FString ItemNam
 
 		jstring ItemNameParam = Env->NewStringUTF(TCHAR_TO_UTF8(*ItemName));
 		jstring CurrencyNameParam = Env->NewStringUTF(TCHAR_TO_UTF8(*CurrencyName));
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, ItemNameParam, CurrencyNameParam, Value);
-		
+
 		Env->DeleteLocalRef(ItemNameParam);
 		Env->DeleteLocalRef(CurrencyNameParam);
 	}
@@ -93,11 +93,11 @@ void UPrFirebaseAnalyticsModule_Android::LogLevelUp(FString Character, int Level
 	if (auto Env = FAndroidApplication::GetJavaEnv())
 	{
 		static auto Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_FirebaseAnalytics_LogLevelUp", "(Ljava/lang/String;J)V", false);
-		
+
 		jstring CharacterParam = Env->NewStringUTF(TCHAR_TO_UTF8(*Character));
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, CharacterParam, Level);
-		
+
 		Env->DeleteLocalRef(CharacterParam);
 	}
 }
@@ -107,11 +107,11 @@ void UPrFirebaseAnalyticsModule_Android::LogLevelStart(FString LevelName)
 	if (auto Env = FAndroidApplication::GetJavaEnv())
 	{
 		static auto Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_FirebaseAnalytics_LogLevelStart", "(Ljava/lang/String;)V", false);
-		
+
 		jstring LevelNameParam = Env->NewStringUTF(TCHAR_TO_UTF8(*LevelName));
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, LevelNameParam);
-		
+
 		Env->DeleteLocalRef(LevelNameParam);
 	}
 }
@@ -124,9 +124,9 @@ void UPrFirebaseAnalyticsModule_Android::LogLevelEnd(FString LevelName, FString 
 
 		jstring LevelNameParam = Env->NewStringUTF(TCHAR_TO_UTF8(*LevelName));
 		jstring SuccessParam = Env->NewStringUTF(TCHAR_TO_UTF8(*Success));
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, LevelNameParam, SuccessParam);
-		
+
 		Env->DeleteLocalRef(LevelNameParam);
 		Env->DeleteLocalRef(SuccessParam);
 	}
@@ -142,10 +142,10 @@ void UPrFirebaseAnalyticsModule_Android::SetDefaultEventParameters(TMap<FString,
 		jmethodID BundleInit = Env->GetMethodID(BundleClass, "<init>", "()V");
 		jmethodID BundlePutString = Env->GetMethodID(BundleClass, "putString", "(Ljava/lang/String;Ljava/lang/String;)V");
 		jmethodID BundlePutDouble = Env->GetMethodID(BundleClass, "putDouble", "(Ljava/lang/String;D)V");
-		
+
 		jobject BundleObject = Env->NewGlobalRef(Env->NewObject(BundleClass, BundleInit));
 
-		for(const TPair<FString, FString>& ParamPair : StringParams)
+		for (const TPair<FString, FString>& ParamPair : StringParams)
 		{
 			jstring ParamKey = Env->NewStringUTF(TCHAR_TO_UTF8(*ParamPair.Key));
 			jstring ParamVal = Env->NewStringUTF(TCHAR_TO_UTF8(*ParamPair.Value));
@@ -156,7 +156,7 @@ void UPrFirebaseAnalyticsModule_Android::SetDefaultEventParameters(TMap<FString,
 			Env->DeleteLocalRef(ParamVal);
 		}
 
-		for(const TPair<FString, float>& ParamPair : FloatParams)
+		for (const TPair<FString, float>& ParamPair : FloatParams)
 		{
 			jstring ParamKey = Env->NewStringUTF(TCHAR_TO_UTF8(*ParamPair.Key));
 
@@ -164,9 +164,9 @@ void UPrFirebaseAnalyticsModule_Android::SetDefaultEventParameters(TMap<FString,
 
 			Env->DeleteLocalRef(ParamKey);
 		}
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, BundleObject);
-		
+
 		Env->DeleteLocalRef(BundleClass);
 		Env->DeleteGlobalRef(BundleObject);
 	}
@@ -184,7 +184,7 @@ void UPrFirebaseAnalyticsModule_Android::LogPurchase(FPrFirebasePurchaseData Pur
 		jmethodID BundlePutDouble = Env->GetMethodID(BundleClass, "putDouble", "(Ljava/lang/String;D)V");
 
 		jobject BundleObject = Env->NewGlobalRef(Env->NewObject(BundleClass, BundleInit));
-		
+
 		jfieldID CurrencyField = Env->GetStaticFieldID(AnalyticsParamClass, "CURRENCY", "Ljava/lang/String;");
 		jstring CurrencyParamName = reinterpret_cast<jstring>(Env->GetStaticObjectField(AnalyticsParamClass, CurrencyField));
 		jstring CurrencyString = Env->NewStringUTF(TCHAR_TO_UTF8(*PurchaseData.TransactionID));
@@ -198,13 +198,13 @@ void UPrFirebaseAnalyticsModule_Android::LogPurchase(FPrFirebasePurchaseData Pur
 		Env->CallVoidMethod(BundleObject, BundlePutString, TransactionIDParamName, TransactionIDString);
 		Env->DeleteLocalRef(TransactionIDParamName);
 		Env->DeleteLocalRef(TransactionIDString);
-		
+
 		jfieldID ValueField = Env->GetStaticFieldID(AnalyticsParamClass, "VALUE", "Ljava/lang/String;");
 		jstring ValueParamName = reinterpret_cast<jstring>(Env->GetStaticObjectField(AnalyticsParamClass, ValueField));
 		Env->CallVoidMethod(BundleObject, BundlePutDouble, ValueParamName, PurchaseData.Value);
 		Env->DeleteLocalRef(ValueParamName);
 
-		for(const TPair<FString, FString>& ParamPair : PurchaseData.CustomData)
+		for (const TPair<FString, FString>& ParamPair : PurchaseData.CustomData)
 		{
 			jstring ParamKey = Env->NewStringUTF(TCHAR_TO_UTF8(*ParamPair.Key));
 			jstring ParamVal = Env->NewStringUTF(TCHAR_TO_UTF8(*ParamPair.Value));
@@ -216,7 +216,7 @@ void UPrFirebaseAnalyticsModule_Android::LogPurchase(FPrFirebasePurchaseData Pur
 		}
 
 		static auto Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_FirebaseAnalytics_LogPurchase", "(Landroid/os/Bundle;)V", false);
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, BundleObject);
 
 		Env->DeleteLocalRef(BundleClass);
