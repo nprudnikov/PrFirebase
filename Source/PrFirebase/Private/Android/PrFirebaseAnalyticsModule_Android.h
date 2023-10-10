@@ -14,6 +14,23 @@ class UPrFirebaseAnalyticsModule_Android : public UPrFirebaseAnalyticsModule
 #if WITH_FIREBASE && PLATFORM_ANDROID
 
 public:
+	
+	virtual void LogEvent(FString EventName, TMap<FString, FString> StringParams, TMap<FString, float> FloatParams) override;
+
+	virtual void LogScreenView(FString ScreenName, FString ScreenClass) override;
+
+	virtual void LogSpendVirtualCurrency(FString ItemName, FString CurrencyName, float Value) override;
+
+	virtual void LogLevelUp(FString Character, int Level) override;
+
+	virtual void LogLevelStart(FString LevelName) override;
+
+	virtual void LogLevelEnd(FString LevelName, FString Success) override;
+
+	virtual void LogPurchase(FPrFirebasePurchaseData PurchaseData) override;
+
+	virtual void SetDefaultEventParameters(TMap<FString, FString> StringParams, TMap<FString, float> FloatParams) override;
+	
 	virtual void LogImpression(FPrFirebaseImpressionData ImpressionData) override;
 
 	virtual void RequestAppInstanceId() override;
