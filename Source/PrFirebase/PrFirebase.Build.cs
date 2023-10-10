@@ -22,7 +22,6 @@ namespace UnrealBuildTool.Rules
             bool bFirebaseAuthEnable = false;
             bool bFirebasePerformanceEnable = false;
             bool bFirebaseAppDistributionEnable = false;
-            bool bFirebaseDontLinkPromisesObjC = false;
             
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseEnable", out bFirebaseEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseCrashlyticsEnable", out bFirebaseCrashlyticsEnable);
@@ -30,7 +29,6 @@ namespace UnrealBuildTool.Rules
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseAuthEnable", out bFirebaseAuthEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebasePerformanceEnable", out bFirebasePerformanceEnable);
             EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseAppDistributionEnable", out bFirebaseAppDistributionEnable);
-            EngineConfig.TryGetValue("/Script/PrFirebase.PrFirebaseSettings", "bFirebaseDontLinkPromisesObjC", out bFirebaseDontLinkPromisesObjC);
 
             PrivateIncludePaths.AddRange(
                 new string[] {
@@ -82,11 +80,18 @@ namespace UnrealBuildTool.Rules
 							"../../ThirdParty/iOS/FirebaseCore.embeddedframework.zip"
 						)
 					);
-                
+
 					PublicAdditionalFrameworks.Add(
 						new Framework(
-							"FirebaseCoreDiagnostics",
-							"../../ThirdParty/iOS/FirebaseCoreDiagnostics.embeddedframework.zip"
+							"FirebaseCoreExtension",
+							"../../ThirdParty/iOS/FirebaseCoreExtension.embeddedframework.zip"
+						)
+					);
+
+					PublicAdditionalFrameworks.Add(
+						new Framework(
+							"FirebaseCoreInternal",
+							"../../ThirdParty/iOS/FirebaseCoreInternal.embeddedframework.zip"
 						)
 					);
 					
@@ -124,16 +129,20 @@ namespace UnrealBuildTool.Rules
 							"../../ThirdParty/iOS/nanopb.embeddedframework.zip"
 						)
 					);
-					
-					if (bFirebaseDontLinkPromisesObjC == false)
-					{
-						PublicAdditionalFrameworks.Add(
-							new Framework(
-								"PromisesObjC",
-								"../../ThirdParty/iOS/PromisesObjC.embeddedframework.zip"
-							)
-						);
-					}
+
+					PublicAdditionalFrameworks.Add(
+						new Framework(
+							"FirebaseSessions",
+							"../../ThirdParty/iOS/FirebaseSessions.embeddedframework.zip"
+						)
+					);
+
+					PublicAdditionalFrameworks.Add(
+						new Framework(
+							"PromisesSwift",
+							"../../ThirdParty/iOS/PromisesSwift.embeddedframework.zip"
+						)
+					);
 					
 					/* Crashlytics */
 					if (bFirebaseCrashlyticsEnable)
