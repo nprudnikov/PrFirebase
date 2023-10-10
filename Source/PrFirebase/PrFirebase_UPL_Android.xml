@@ -81,7 +81,7 @@
 				<if condition="bFirebasePerformanceEnable">
 					<true>
 						<insert>
-							classpath 'com.google.firebase:perf-plugin:1.4.0'
+							classpath 'com.google.firebase:perf-plugin:1.4.2'
 						</insert>
 					</true>
 				</if>
@@ -98,9 +98,9 @@
 			<true>
 				<insert>
 					dependencies {
-						implementation 'com.google.android.gms:play-services-games:21.0.0'
+						implementation 'com.google.android.gms:play-services-games:23.1.0'
 
-						implementation platform('com.google.firebase:firebase-bom:30.4.0')
+						implementation platform('com.google.firebase:firebase-bom:32.3.1')
 						implementation 'com.google.firebase:firebase-analytics'
 				</insert>
 
@@ -108,6 +108,7 @@
 					<true>
 						<insert>
 							implementation 'com.google.firebase:firebase-crashlytics-ndk'
+							implementation 'com.google.firebase:firebase-crashlytics'
 						</insert>
 					</true>
 				</if>
