@@ -1,4 +1,4 @@
-// Copyright 2021-2022 Anton Rassadin. All Rights Reserved.
+// Copyright 2021-2023 Anton Rassadin. All Rights Reserved.
 
 package com.pr.firebase.analytics;
 
@@ -26,7 +26,7 @@ public class PrFirebaseAnalytics {
 		mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, impressionData);
 	}
 
-	public void RequestAppInstanceId()
+	public void requestAppInstanceId()
 	{
 		Task<String> GetInstanceTask = mFirebaseAnalytics.getAppInstanceId();
 		GetInstanceTask.addOnCompleteListener(new OnCompleteListener<String>()
@@ -43,7 +43,7 @@ public class PrFirebaseAnalytics {
 			});
 	}
 
-	public String GetAppInstanceId()
+	public String getAppInstanceId()
 	{
 		return mAppInstanceId;
 	}

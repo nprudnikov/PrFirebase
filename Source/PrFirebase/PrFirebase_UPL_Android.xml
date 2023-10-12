@@ -29,7 +29,7 @@
 
 	<proguardAdditions>
 		<if condition="bFirebaseEnable">
-			<true> 
+			<true>
 				<if condition="bFirebaseCrashlyticsEnable">
 					<true>
 						<insert>
@@ -185,7 +185,7 @@
 			</true>
 		</if>
 	</prebuildCopies>
-	
+
 	<gameActivityImportAdditions>
 		<if condition="bFirebaseEnable">
 			<true>
@@ -205,9 +205,9 @@
 					<![CDATA[
 						public void AndroidThunkJava_Firebase_Initialize()
 						{
-							
+
 						}
-            
+
             // Firebase Crashlytics
 
 						public void AndroidThunkJava_FirebaseCrashlytics_SetUserIdentifier(String UserIdentifier)
@@ -222,12 +222,12 @@
 
 						public void AndroidThunkJava_FirebaseCrashlytics_WriteError(String ErrorMessage)
 						{
-							RuntimeException ex = new RuntimeException(String.format("%s", ErrorMessage)); 
+							RuntimeException ex = new RuntimeException(String.format("%s", ErrorMessage));
 							StackTraceElement[] trace = new StackTraceElement[] {
 								new StackTraceElement(ErrorMessage, "java", null, -2),
 							};
 
-							ex.setStackTrace(trace); 
+							ex.setStackTrace(trace);
 							PrFirebase.crashlyticsProxy().writeException(ex);
 						}
 
@@ -235,51 +235,51 @@
 						{
 							PrFirebase.crashlyticsProxy().addAttribute(Key, Value);
 						}
-            
+
             // FirebasePerformance
-            
+
             public void AndroidThunkJava_FirebasePerformance_StartTrace(int index, String identifier)
 						{
 							PrFirebase.performanceProxy().startTrace(index, identifier);
 						}
-            
+
             public void AndroidThunkJava_FirebasePerformance_StopTrace(int index)
 						{
 							PrFirebase.performanceProxy().stopTrace(index);
 						}
-            
+
             public void AndroidThunkJava_FirebasePerformance_IncrementMetric(int index, String name, int value)
 						{
 							PrFirebase.performanceProxy().incrementMetric(index, name, value);
 						}
-            
+
             public void AndroidThunkJava_FirebasePerformance_SetMetric(int index, String name, int value)
 						{
 							PrFirebase.performanceProxy().setMetric(index, name, value);
 						}
-            
+
             public void AndroidThunkJava_FirebasePerformance_SetAttribute(int index, String name, String value)
 						{
 							PrFirebase.performanceProxy().setAttribute(index, name, value);
 						}
-            
+
             public void AndroidThunkJava_FirebasePerformance_RemoveAttribute(int index, String name)
 						{
 							PrFirebase.performanceProxy().removeAttribute(index, name);
 						}
 
 			// Firebase Analytics
-			
+
 			public void AndroidThunkJava_FirebaseAnalytics_LogEvent(String Name, Bundle params)
 						{
 							PrFirebase.analyticsProxy().logEvent(Name, params);
 						}
-						
+
 			public void AndroidThunkJava_FirebaseAnalytics_LogScreenView(String ScreenName, String ScreenClass)
 						{
 							PrFirebase.analyticsProxy().logScreenView(ScreenName, ScreenClass);
 						}
-												
+
 			public void AndroidThunkJava_FirebaseAnalytics_LogSpendVirtualCurrency(String ItemName, String CurrencyName, float Value)
 						{
 							PrFirebase.analyticsProxy().logSpendVirtualCurrency(ItemName, CurrencyName, Value);
@@ -289,40 +289,45 @@
 						{
 							PrFirebase.analyticsProxy().logLevelUp(Character, Level);
 						}
-						
+
 			public void AndroidThunkJava_FirebaseAnalytics_LogLevelStart(String LevelName)
 						{
 							PrFirebase.analyticsProxy().logLevelStart(LevelName);
-						}	
-											
+						}
+
 			public void AndroidThunkJava_FirebaseAnalytics_LogLevelEnd(String LevelName, String Success)
 						{
 							PrFirebase.analyticsProxy().logLevelEnd(LevelName, Success);
-						}	
-																
+						}
+
 			public void AndroidThunkJava_FirebaseAnalytics_LogPurchase(Bundle purchaseData)
 						{
 							PrFirebase.analyticsProxy().logPurchase(purchaseData);
-						}	
-																					
+						}
+
 			public void AndroidThunkJava_FirebaseAnalytics_SetDefaultEventParameters(Bundle params)
 						{
 							PrFirebase.analyticsProxy().setDefaultEventParameters(params);
 						}
-						
+
 			public void AndroidThunkJava_FirebaseAnalytics_LogImpression(Bundle impressionData)
 						{
 							PrFirebase.analyticsProxy().logImpression(impressionData);
 						}
-						
+
 			public void AndroidThunkJava_FirebaseAnalytics_RequestAppInstanceId()
 						{
-							PrFirebase.analyticsProxy().RequestAppInstanceId();
+							PrFirebase.analyticsProxy().requestAppInstanceId();
 						}
 
 			public String AndroidThunkJava_FirebaseAnalytics_GetAppInstanceId()
 						{
-							return PrFirebase.analyticsProxy().GetAppInstanceId();
+							return PrFirebase.analyticsProxy().getAppInstanceId();
+						}
+
+			public void AndroidThunkJava_FirebaseAnalytics_LogRevenue(float RevenueUSD)
+						{
+							PrFirebase.analyticsProxy().logRevenue(RevenueUSD);
 						}
 					]]>
 				</insert>
