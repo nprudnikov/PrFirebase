@@ -81,8 +81,7 @@ struct PRFIREBASE_API FPrFirebasePurchaseData
 	TMap<FString, FString> CustomData;
 
 	FPrFirebasePurchaseData()
-		: TransactionID("")
-		, Currency("USD")
+		: Currency("USD")
 		, Value(0.f)
 	{
 	}

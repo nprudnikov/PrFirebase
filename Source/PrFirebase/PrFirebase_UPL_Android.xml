@@ -317,12 +317,17 @@
 						
 			public void AndroidThunkJava_FirebaseAnalytics_RequestAppInstanceId()
 						{
-							PrFirebase.analyticsProxy().RequestAppInstanceId();
+							PrFirebase.analyticsProxy().requestAppInstanceId();
 						}
 
 			public String AndroidThunkJava_FirebaseAnalytics_GetAppInstanceId()
 						{
-							return PrFirebase.analyticsProxy().GetAppInstanceId();
+							return PrFirebase.analyticsProxy().getAppInstanceId();
+						}
+
+			public void AndroidThunkJava_FirebaseAnalytics_LogRevenue(float RevenueUSD)
+						{
+							PrFirebase.analyticsProxy().logRevenue(RevenueUSD);
 						}
 					]]>
 				</insert>
